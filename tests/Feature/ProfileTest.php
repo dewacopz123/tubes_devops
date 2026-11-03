@@ -32,6 +32,11 @@ class ProfileTest extends TestCase
         return $karyawan;
     }
 
+    private function loginAsKaryawan(): Karyawan
+    {
+        return $this->login();
+    }
+
     /**
      * TC-WBT-FR08-01
      * Menguji fungsi index() profile berhasil.
@@ -54,9 +59,9 @@ class ProfileTest extends TestCase
      */
     public function test_profile_index_user_not_found()
     {
-        $user = Karyawan::factory()->create();
-
+        $user = $this->createKaryawan();
         $this->actingAs($user);
+        $user->delete();
 
         $response = $this->get('/profile');
 

@@ -28,27 +28,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobdesk/form', [JobdeskController::class, 'form']);
     Route::get('/jobdesk/assign/form', [JobdeskController::class, 'assignForm']);
     Route::post('/jobdesk/assign', [JobdeskController::class, 'assign']);
-    Route::get('/jobdesk/{id}', [JobdeskController::class, 'show']);
-    Route::put('/jobdesk/{id}', [JobdeskController::class, 'update']);
-    Route::delete('/jobdesk/{id}', [JobdeskController::class, 'destroy']);
+    Route::get('/jobdesk/{id}', [JobdeskController::class, 'show'])->whereNumber('id');
+    Route::put('/jobdesk/{id}', [JobdeskController::class, 'update'])->whereNumber('id');
+    Route::delete('/jobdesk/{id}', [JobdeskController::class, 'destroy'])->whereNumber('id');
     Route::delete('/jobdesk/{jobdesk}/karyawan/{karyawan}', [JobdeskController::class, 'removeKaryawan']);
 
     Route::get('/penggajian', [PenggajianController::class, 'index']);
     Route::get('/penggajian/create', [PenggajianController::class, 'create']);
     Route::post('/penggajian', [PenggajianController::class, 'store']);
-    Route::get('/penggajian/{id}', [PenggajianController::class, 'show']);
-    Route::put('/penggajian/{id}', [PenggajianController::class, 'update']);
-    Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy']);
+    Route::get('/penggajian/{id}', [PenggajianController::class, 'show'])->whereNumber('id');
+    Route::put('/penggajian/{id}', [PenggajianController::class, 'update'])->whereNumber('id');
+    Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy'])->whereNumber('id');
 
     Route::get('/karyawan', [KaryawanController::class, 'index']);
     Route::get('/karyawan/form', [KaryawanController::class, 'form']);
-    Route::get('/karyawan/{id}', [KaryawanController::class, 'show']);
+    Route::get('/karyawan/{id}', [KaryawanController::class, 'show'])->whereNumber('id');
     Route::post('/karyawan', [KaryawanController::class, 'store']);
-    Route::put('/karyawan/{id}', [KaryawanController::class, 'update']);
-    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy']);
+    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
+    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::match(['post', 'put'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/upload-photo', [ProfileController::class, 'uploadPhoto'])->name('profile.upload-photo');
 
     Route::get('/export/laporan', [ExportController::class, 'laporan']);

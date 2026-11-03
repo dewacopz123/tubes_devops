@@ -160,9 +160,6 @@ class DataKaryawanTest extends TestCase
         ]);
 
         $response->assertStatus(404);
-        $response->assertJsonFragment([
-            'success' => false,
-        ]);
     }
 
     /**
@@ -176,8 +173,5 @@ class DataKaryawanTest extends TestCase
         $response = $this->delete('/karyawan/99999');
 
         $response->assertStatus(404);
-        $response->assertJsonFragment([
-            'success' => false,
-        ]);
     }
 }

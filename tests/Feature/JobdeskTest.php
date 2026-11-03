@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Jobdesk;
 use App\Models\Karyawan;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -17,11 +16,15 @@ class JobdeskTest extends TestCase
      * WBT-001
      * Menguji halaman index jobdesk.
      */
-    private function login(): void
+    private function login(): Karyawan
     {
-        $user = User::factory()->create();
+        $karyawan = $this->createKaryawan([
+            'role' => 'admin',
+        ]);
 
-        $this->actingAs($user);
+        $this->actingAs($karyawan);
+
+        return $karyawan;
     }
 
     private function createKaryawan(array $attributes = []): Karyawan
@@ -63,19 +66,16 @@ class JobdeskTest extends TestCase
     public function test_store_jobdesk_success()
     {
         $this->login();
-        $karyawan = $this->createKaryawan();
 
-        $response = $this->post('/jobdesk', [
+        $response = $this->postJson('/jobdesk', [
             'nama_jobdesk' => 'Admin Sistem',
             'tugas_utama' => 'Mengelola sistem perusahaan',
-            'karyawan_id' => $karyawan->id,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $this->assertDatabaseHas('jobdesks', [
             'nama_jobdesk' => 'Admin Sistem',
-            'karyawan_id' => $karyawan->id,
         ]);
     }
 
@@ -86,20 +86,13 @@ class JobdeskTest extends TestCase
     public function test_store_jobdesk_invalid()
     {
         $this->login();
-        $karyawan = $this->createKaryawan();
 
-        $response = $this->post('/jobdesk', [
+        $response = $this->postJson('/jobdesk', [
             'nama_jobdesk' => '',
             'tugas_utama' => 'Mengelola sistem perusahaan',
-            'karyawan_id' => $karyawan->id,
         ]);
 
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas('jobdesks', [
-            'nama_jobdesk' => 'Admin Sistem',
-            'karyawan_id' => $karyawan->id,
-        ]);
+        $response->assertStatus(422);
     }
 
     /**
@@ -154,11 +147,8 @@ class JobdeskTest extends TestCase
     public function test_show_jobdesk_success()
     {
         $this->login();
-        $karyawan = $this->createKaryawan();
 
-        $jobdesk = $this->createJobdesk([
-            'karyawan_id' => $karyawan->id,
-        ]);
+        $jobdesk = $this->createJobdesk();
 
         $response = $this->get("/jobdesk/{$jobdesk->id}");
 
@@ -166,7 +156,6 @@ class JobdeskTest extends TestCase
         $response->assertJsonFragment([
             'nama_jobdesk' => 'Admin Sistem',
             'tugas_utama' => 'Mengelola sistem perusahaan',
-            'karyawan_id' => $karyawan->id,
         ]);
     }
 
@@ -176,11 +165,11 @@ class JobdeskTest extends TestCase
      */
     public function test_show_jobdesk_success_as_karyawan()
     {
-        $karyawan = $this->createKaryawan();
+        $karyawan = $this->createKaryawan(['role' => 'karyawan']);
+        $this->actingAs($karyawan);
 
-        $jobdesk = $this->createJobdesk([
-            'karyawan_id' => $karyawan->id,
-        ]);
+        $jobdesk = $this->createJobdesk();
+        $jobdesk->karyawans()->attach($karyawan->id);
 
         $response = $this->getJson("/jobdesk/{$jobdesk->id}");
 
@@ -189,7 +178,6 @@ class JobdeskTest extends TestCase
         $response->assertJsonFragment([
             'nama_jobdesk' => 'Admin Sistem',
             'tugas_utama' => 'Mengelola sistem perusahaan',
-            'karyawan_id' => $karyawan->id,
         ]);
     }
 
@@ -215,7 +203,7 @@ class JobdeskTest extends TestCase
         $this->login();
         $karyawan = $this->createKaryawan();
 
-        $response = $this->get('/jobdesk/form');
+        $response = $this->get('/jobdesk/assign/form');
 
         $response->assertStatus(200);
         $response->assertSee($karyawan->nama);
@@ -239,7 +227,7 @@ class JobdeskTest extends TestCase
             'email' => 'andi@example.com',
         ]);
 
-        $response = $this->get('/jobdesk/form');
+        $response = $this->get('/jobdesk/assign/form');
 
         $response->assertStatus(200);
 
