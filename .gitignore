@@ -24,4 +24,6 @@ Homestead.yaml
 Thumbs.db
 jalankan.bat
 *.pdf
+coverage.xml
+
 
