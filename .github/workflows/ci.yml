@@ -155,8 +155,9 @@ jobs:
         continue-on-error: true
 
       - name: SonarQube Scanner
-        if: env.SONAR_TOKEN != ''
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
