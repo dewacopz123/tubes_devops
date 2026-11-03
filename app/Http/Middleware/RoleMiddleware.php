@@ -9,7 +9,7 @@ class RoleMiddleware
 {
     public function handle($request, Closure $next, $role)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/login');
         }
 
@@ -20,4 +20,3 @@ class RoleMiddleware
         return $next($request);
     }
 }
-

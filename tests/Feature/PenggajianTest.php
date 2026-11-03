@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Karyawan;
 use App\Models\Penggajian;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class PenggajianTest extends TestCase
 {
@@ -15,9 +15,9 @@ class PenggajianTest extends TestCase
     private function createKaryawan(array $attributes = []): Karyawan
     {
         return Karyawan::create(array_merge([
-            'kode_karyawan' => 'KRY' . str_pad((string)(Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
+            'kode_karyawan' => 'KRY'.str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
             'nama' => 'Budi Santoso',
-            'email' => 'budi' . (Karyawan::count() + 1) . '@example.com',
+            'email' => 'budi'.(Karyawan::count() + 1).'@example.com',
             'telepon' => '08123456789',
             'password' => Hash::make('password'),
             'role' => 'karyawan',
@@ -32,6 +32,7 @@ class PenggajianTest extends TestCase
             'email' => 'admin@example.com',
         ]);
         $this->actingAs($admin);
+
         return $admin;
     }
 
@@ -40,14 +41,14 @@ class PenggajianTest extends TestCase
         $karyawanId = $attributes['karyawan_id'] ?? $this->createKaryawan()->id;
 
         return Penggajian::create(array_merge([
-            'kode_penggajian' => 'PG-' . uniqid(),
+            'kode_penggajian' => 'PG-'.uniqid(),
             'karyawan_id' => $karyawanId,
             'tanggal' => '2025-01-01',
             'gaji_pokok' => 5000000,
         ], $attributes));
     }
 
-     /**
+    /**
      * PG-004
      * Store data penggajian berhasil.
      */
@@ -69,7 +70,6 @@ class PenggajianTest extends TestCase
             'gaji_pokok' => 5000000,
         ]);
     }
-
 
     /**
      * PG-002
@@ -93,8 +93,6 @@ class PenggajianTest extends TestCase
         $response = $this->get('/penggajian/create');
         $response->assertStatus(200);
     }
-
-   
 
     /**
      * PG-005

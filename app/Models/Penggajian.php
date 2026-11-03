@@ -13,7 +13,7 @@ class Penggajian extends Model
         'kode_penggajian',
         'karyawan_id',
         'tanggal',
-        'gaji_pokok'
+        'gaji_pokok',
     ];
 
     public function karyawan()
@@ -21,5 +21,3 @@ class Penggajian extends Model
         return $this->belongsTo(Karyawan::class);
     }
 }
-
-

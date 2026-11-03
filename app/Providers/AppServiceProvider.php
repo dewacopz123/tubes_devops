@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use App\Repositories\KaryawanRepository;
 use App\Repositories\KaryawanRepositoryInterface;
-use App\Repositories\PenggajianRepositoryInterface;
 use App\Repositories\PenggajianRepository;
+use App\Repositories\PenggajianRepositoryInterface;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,14 +17,14 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-        KaryawanRepositoryInterface::class,
-        KaryawanRepository::class,
+            KaryawanRepositoryInterface::class,
+            KaryawanRepository::class,
         );
 
         $this->app->bind(
-        PenggajianRepositoryInterface::class,
-        PenggajianRepository::class
-    );
+            PenggajianRepositoryInterface::class,
+            PenggajianRepository::class
+        );
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesSekData;
-use Illuminate\Http\Request;
 use App\Models\Jobdesk;
 use App\Models\Karyawan;
+use Illuminate\Http\Request;
 
 class JobdeskController extends Controller
 {
@@ -76,7 +76,7 @@ class JobdeskController extends Controller
         if ($user->role !== 'admin') {
             $allowed = $jobdesk->karyawans->contains('id', $user->id);
 
-            if (!$allowed) {
+            if (! $allowed) {
                 abort(403, 'Anda tidak memiliki akses ke jobdesk ini.');
             }
         }
@@ -88,6 +88,7 @@ class JobdeskController extends Controller
     {
         $jobdesks = Jobdesk::all();
         $karyawans = Karyawan::all();
+
         return view('Jobdesk.assign', compact('jobdesks', 'karyawans'));
     }
 
@@ -107,7 +108,7 @@ class JobdeskController extends Controller
 
         $existingIds = $jobdesk->karyawans()
             ->pluck('karyawans.id')
-            ->map(fn($id) => (string) $id)
+            ->map(fn ($id) => (string) $id)
             ->toArray();
 
         $duplicateIds = array_intersect(
@@ -115,14 +116,14 @@ class JobdeskController extends Controller
             array_map('strval', $data['karyawan_id'])
         );
 
-        if (!empty($duplicateIds)) {
+        if (! empty($duplicateIds)) {
             $duplicateNames = Karyawan::whereIn('id', $duplicateIds)
                 ->pluck('nama')
                 ->implode(', ');
 
             return response()->json([
                 'success' => false,
-                'message' => 'Beberapa karyawan sudah ditugaskan ke jobdesk ini: ' . $duplicateNames,
+                'message' => 'Beberapa karyawan sudah ditugaskan ke jobdesk ini: '.$duplicateNames,
             ], 422);
         }
 
@@ -144,7 +145,7 @@ class JobdeskController extends Controller
             ->where('karyawans.id', $karyawanId)
             ->exists();
 
-        if (!$isAssigned) {
+        if (! $isAssigned) {
             return response()->json([
                 'success' => false,
                 'message' => 'Karyawan tidak terdaftar pada jobdesk ini.',
@@ -164,17 +165,17 @@ class JobdeskController extends Controller
     public function destroy($id)
     {
         Jobdesk::findOrFail($id)->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Jobdesk berhasil dihapus.',
         ]);
     }
 
-
     public function form()
     {
         $karyawans = Karyawan::all();
+
         return view('Jobdesk.formAddEdit', compact('karyawans'));
     }
-
 }

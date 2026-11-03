@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SyncController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -13,7 +13,7 @@ Route::middleware(['api.token'])->group(function () {
         '/profile/upload-photo',
         [ProfileController::class, 'uploadPhoto']
     );
-    
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     /*
@@ -99,5 +99,4 @@ Route::middleware(['api.token'])->group(function () {
     Route::put('/penggajian/{id}', [SyncController::class, 'updatePenggajian']);
     Route::delete('/penggajian/{id}', [SyncController::class, 'destroyPenggajian']);
 
-    
 });

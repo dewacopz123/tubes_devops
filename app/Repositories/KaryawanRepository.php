@@ -25,12 +25,14 @@ class KaryawanRepository implements KaryawanRepositoryInterface
     {
         $karyawan = Karyawan::findOrFail($id);
         $karyawan->update($data);
+
         return $karyawan;
     }
 
     public function delete($id)
     {
         $karyawan = Karyawan::findOrFail($id);
+
         return $karyawan->delete();
     }
 }

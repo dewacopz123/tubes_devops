@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Karyawan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
@@ -14,9 +14,9 @@ class LoginTest extends TestCase
     private function createKaryawan(array $attributes = []): Karyawan
     {
         return Karyawan::create(array_merge([
-            'kode_karyawan' => 'KRY' . str_pad((string)(Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
+            'kode_karyawan' => 'KRY'.str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
             'nama' => 'Budi Santoso',
-            'email' => 'budi' . (Karyawan::count() + 1) . '@example.com',
+            'email' => 'budi'.(Karyawan::count() + 1).'@example.com',
             'telepon' => '08123456789',
             'password' => Hash::make('password123'),
             'role' => 'karyawan',
@@ -123,7 +123,7 @@ class LoginTest extends TestCase
     }
 
     /**
-     * WBT-01-FR02 
+     * WBT-01-FR02
      * Register gagal data tidak valid.
      */
     public function test_register_fails_when_data_invalid()

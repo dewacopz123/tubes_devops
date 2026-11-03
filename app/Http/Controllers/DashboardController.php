@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Karyawan;
 use App\Models\Absensi;
-use App\Models\Jobdesk;
+use App\Models\Karyawan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 
@@ -38,7 +37,7 @@ class DashboardController extends Controller
             'karyawanTanpaJobdesk' => $hasJobdesksTable
                 ? Karyawan::doesntHave('jobdesks')->count()
                 : Karyawan::count(),
-            'karyawans' => $karyawans
+            'karyawans' => $karyawans,
         ]);
     }
 }

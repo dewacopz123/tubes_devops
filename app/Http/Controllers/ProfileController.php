@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesSekData;
+use App\Models\Karyawan;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Karyawan;
 
 class ProfileController extends Controller
 {
@@ -51,22 +50,22 @@ class ProfileController extends Controller
         try {
 
             $request->validate([
-                'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+                'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
             $karyawan = Auth::user();
 
-            if (!$karyawan) {
+            if (! $karyawan) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'User tidak ditemukan'
+                    'message' => 'User tidak ditemukan',
                 ], 401);
             }
 
             $uploadedFileUrl = Cloudinary::upload(
                 $request->file('foto')->getRealPath(),
                 [
-                    'folder' => 'sek/profile'
+                    'folder' => 'sek/profile',
                 ]
             )->getSecurePath();
 
@@ -76,7 +75,7 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Foto berhasil diupload',
-                'foto_url' => $uploadedFileUrl
+                'foto_url' => $uploadedFileUrl,
             ]);
 
         } catch (\Throwable $e) {
@@ -84,12 +83,12 @@ class ProfileController extends Controller
             \Log::error('Cloudinary Upload Error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

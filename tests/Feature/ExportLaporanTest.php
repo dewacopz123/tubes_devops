@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Karyawan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Tests\TestCase;
 
 class ExportLaporanTest extends TestCase
 {
@@ -71,9 +71,9 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-    * EXP-004
-    * Menguji relasi kosong pada sheet jobdesk.
-    */
+     * EXP-004
+     * Menguji relasi kosong pada sheet jobdesk.
+     */
     public function test_export_laporan_relasi_kosong_can_be_downloaded()
     {
         Excel::fake();
@@ -86,10 +86,10 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-    * WBT-01-FR10
-    * Menguji export penggajian saat data tersedia.
-    */
-     public function test_export_penggajian_can_be_downloaded()
+     * WBT-01-FR10
+     * Menguji export penggajian saat data tersedia.
+     */
+    public function test_export_penggajian_can_be_downloaded()
     {
         Excel::fake();
         $this->login();
@@ -101,10 +101,10 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-    * WBT-01-FR10
-    * Menguji export penggajian saat data kosong tetap dapat diunduh.
-    */
-     public function test_export_penggajian_kosong_can_be_downloaded()
+     * WBT-01-FR10
+     * Menguji export penggajian saat data kosong tetap dapat diunduh.
+     */
+    public function test_export_penggajian_kosong_can_be_downloaded()
     {
         Excel::fake();
         $this->login();
@@ -116,10 +116,10 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-    * WBT-01-FR10
-    * Menguji relasi karyawan null pada export penggajian tetap dapat diunduh.
-    */
-     public function test_export_penggajian_relasi_null_can_be_downloaded()
+     * WBT-01-FR10
+     * Menguji relasi karyawan null pada export penggajian tetap dapat diunduh.
+     */
+    public function test_export_penggajian_relasi_null_can_be_downloaded()
     {
         Excel::fake();
         $this->login();

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Karyawan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class DataKaryawanTest extends TestCase
 {
@@ -14,9 +14,9 @@ class DataKaryawanTest extends TestCase
     private function createKaryawan(array $attributes = []): Karyawan
     {
         return Karyawan::create(array_merge([
-            'kode_karyawan' => 'KRY' . str_pad((string)(Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
+            'kode_karyawan' => 'KRY'.str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
             'nama' => 'Budi Santoso',
-            'email' => 'budi' . (Karyawan::count() + 1) . '@example.com',
+            'email' => 'budi'.(Karyawan::count() + 1).'@example.com',
             'telepon' => '08123456789',
             'password' => Hash::make('password'),
             'role' => 'karyawan',
@@ -31,6 +31,7 @@ class DataKaryawanTest extends TestCase
             'email' => 'admin@example.com',
         ]);
         $this->actingAs($admin);
+
         return $admin;
     }
 
@@ -147,7 +148,7 @@ class DataKaryawanTest extends TestCase
      * KRY-010
      * Update data karyawn gagal id tidak di temukan.
      */
-        public function test_update_karyawan_not_found()
+    public function test_update_karyawan_not_found()
     {
         $this->loginAsAdmin();
 
@@ -160,7 +161,7 @@ class DataKaryawanTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJsonFragment([
-            'success' => false
+            'success' => false,
         ]);
     }
 
@@ -176,7 +177,7 @@ class DataKaryawanTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJsonFragment([
-            'success' => false
+            'success' => false,
         ]);
     }
 }

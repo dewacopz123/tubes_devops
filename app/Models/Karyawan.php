@@ -21,7 +21,7 @@ class Karyawan extends Authenticatable
         'role',
         'status',
         'api_token',
-        'foto'
+        'foto',
     ];
 
     protected $appends = ['foto_url'];
@@ -29,7 +29,7 @@ class Karyawan extends Authenticatable
     public function getFotoUrlAttribute()
     {
         return $this->foto
-            ? asset('storage/' . $this->foto)
+            ? asset('storage/'.$this->foto)
             : null;
     }
 

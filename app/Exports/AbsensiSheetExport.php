@@ -4,8 +4,8 @@ namespace App\Exports;
 
 use App\Models\Absensi;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
 class AbsensiSheetExport implements FromCollection, WithHeadings, WithTitle
 {
@@ -17,7 +17,7 @@ class AbsensiSheetExport implements FromCollection, WithHeadings, WithTitle
                 $a->tanggal,
                 $a->jam_masuk,
                 $a->jam_keluar,
-                $a->status
+                $a->status,
             ];
         });
     }

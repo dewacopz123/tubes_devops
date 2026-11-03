@@ -9,10 +9,10 @@ class LaporanPerusahaanExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new AbsensiSheetExport(),
-            new KaryawanSheetExport(),
-            new JobdeskSheetExport(),
-            new PenggajianSheetExport(),
+            new AbsensiSheetExport,
+            new KaryawanSheetExport,
+            new JobdeskSheetExport,
+            new PenggajianSheetExport,
         ];
     }
 }

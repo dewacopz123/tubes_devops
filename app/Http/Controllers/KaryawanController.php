@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesSekData;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class KaryawanController extends Controller
 {
@@ -14,6 +15,7 @@ class KaryawanController extends Controller
     public function index()
     {
         $karyawans = Karyawan::all();
+
         return view('Karyawan.index', compact('karyawans'));
     }
 
@@ -38,7 +40,7 @@ class KaryawanController extends Controller
             $this->validationAttributes()
         );
 
-        $data['kode_karyawan'] = 'KRY-' . strtoupper(Str::random(6));
+        $data['kode_karyawan'] = 'KRY-'.strtoupper(Str::random(6));
         $data['password'] = Hash::make('123456');
 
         $karyawan = Karyawan::create($data);
@@ -49,7 +51,6 @@ class KaryawanController extends Controller
             'data' => $karyawan,
         ], 201);
     }
-
 
     public function update(Request $request, $id)
     {
@@ -73,6 +74,7 @@ class KaryawanController extends Controller
     public function destroy($id)
     {
         Karyawan::findOrFail($id)->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Data karyawan berhasil dihapus.',

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Karyawan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
@@ -14,9 +14,9 @@ class ProfileTest extends TestCase
     private function createKaryawan(array $attributes = []): Karyawan
     {
         return Karyawan::create(array_merge([
-            'kode_karyawan' => 'KRY' . str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
+            'kode_karyawan' => 'KRY'.str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
             'nama' => 'Budi Santoso',
-            'email' => 'budi' . (Karyawan::count() + 1) . '@example.com',
+            'email' => 'budi'.(Karyawan::count() + 1).'@example.com',
             'telepon' => '08123456789',
             'password' => Hash::make('password'),
             'role' => 'karyawan',
@@ -28,6 +28,7 @@ class ProfileTest extends TestCase
     {
         $karyawan = $this->createKaryawan();
         $this->actingAs($karyawan);
+
         return $karyawan;
     }
 
@@ -104,7 +105,7 @@ class ProfileTest extends TestCase
 
         $response->assertJsonFragment([
             'success' => true,
-            'message' => 'Profile berhasil diperbarui.'
+            'message' => 'Profile berhasil diperbarui.',
         ]);
     }
 
@@ -148,12 +149,12 @@ class ProfileTest extends TestCase
 
         $response->assertSessionHasErrors([
             'nama',
-            'email'
+            'email',
         ]);
 
         $this->assertDatabaseHas('karyawans', [
             'id' => $karyawan->id,
-            'nama' => $oldName
+            'nama' => $oldName,
         ]);
     }
 }

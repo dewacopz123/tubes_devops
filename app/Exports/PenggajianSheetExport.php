@@ -4,8 +4,8 @@ namespace App\Exports;
 
 use App\Models\Penggajian;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
 class PenggajianSheetExport implements FromCollection, WithHeadings, WithTitle
 {
@@ -16,7 +16,7 @@ class PenggajianSheetExport implements FromCollection, WithHeadings, WithTitle
                 $p->kode_penggajian,
                 optional($p->karyawan)->nama ?? '-',
                 $p->tanggal,
-                $p->gaji_pokok
+                $p->gaji_pokok,
             ];
         });
     }

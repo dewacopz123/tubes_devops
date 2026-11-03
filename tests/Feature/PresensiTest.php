@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\Karyawan;
 use App\Models\Absensi;
+use App\Models\Karyawan;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class PresensiTest extends TestCase
 {
@@ -16,9 +16,9 @@ class PresensiTest extends TestCase
     private function createKaryawan(array $attributes = []): Karyawan
     {
         return Karyawan::create(array_merge([
-            'kode_karyawan' => 'KRY' . str_pad((string)(Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
+            'kode_karyawan' => 'KRY'.str_pad((string) (Karyawan::count() + 1), 3, '0', STR_PAD_LEFT),
             'nama' => 'Budi Santoso',
-            'email' => 'budi' . (Karyawan::count() + 1) . '@example.com',
+            'email' => 'budi'.(Karyawan::count() + 1).'@example.com',
             'telepon' => '08123456789',
             'password' => Hash::make('password'),
             'role' => 'karyawan',
@@ -33,6 +33,7 @@ class PresensiTest extends TestCase
             'email' => 'admin@example.com',
         ]);
         $this->actingAs($admin);
+
         return $admin;
     }
 
@@ -40,6 +41,7 @@ class PresensiTest extends TestCase
     {
         $karyawan = $this->createKaryawan();
         $this->actingAs($karyawan);
+
         return $karyawan;
     }
 

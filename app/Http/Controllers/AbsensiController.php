@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Absensi;
 use App\Http\Controllers\Concerns\ValidatesSekData;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Absensi;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AbsensiController extends Controller
 {
@@ -50,7 +50,7 @@ class AbsensiController extends Controller
             'karyawan_id' => $karyawan_id,
             'tanggal' => $tanggal,
             'jam_masuk' => now()->format('H:i:s'),
-            'status' => 'Masuk'
+            'status' => 'Masuk',
         ]);
 
         return response()->json([
@@ -59,6 +59,7 @@ class AbsensiController extends Controller
             'data' => $absensi,
         ], 201);
     }
+
     public function keluar()
     {
         $user = Auth::user();
@@ -69,7 +70,7 @@ class AbsensiController extends Controller
             ->where('tanggal', $tanggal)
             ->first();
 
-        if (!$absensi) {
+        if (! $absensi) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal absen keluar. Anda belum absen masuk.',
@@ -85,7 +86,7 @@ class AbsensiController extends Controller
 
         $absensi->update([
             'jam_keluar' => now()->format('H:i:s'),
-            'status' => 'Selesai'
+            'status' => 'Selesai',
         ]);
 
         return response()->json([

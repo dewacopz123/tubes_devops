@@ -4,8 +4,8 @@ namespace App\Exports;
 
 use App\Models\Karyawan;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
 class KaryawanSheetExport implements FromCollection, WithHeadings, WithTitle
 {
@@ -15,7 +15,7 @@ class KaryawanSheetExport implements FromCollection, WithHeadings, WithTitle
             return [
                 $k->nama,
                 $k->email,
-                $k->status
+                $k->status,
             ];
         });
     }

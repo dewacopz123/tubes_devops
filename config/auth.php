@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Karyawan;
+
 return [
 
     /*
@@ -42,8 +44,6 @@ return [
         ],
     ],
 
-
-
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -64,12 +64,9 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Karyawan::class,
+            'model' => Karyawan::class,
         ],
     ],
-
-
-
 
     /*
     |--------------------------------------------------------------------------

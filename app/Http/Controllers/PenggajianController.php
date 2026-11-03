@@ -3,37 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesSekData;
-use App\Models\Penggajian;
 use App\Models\Karyawan;
-use Illuminate\Http\Request;
+use App\Models\Penggajian;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class PenggajianController extends Controller
 {
     use ValidatesSekData;
 
     public function index(Request $request)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    if ($user->role === 'admin') {
-        $penggajians = Penggajian::with('karyawan')->get();
-    } else {
-        $penggajians = Penggajian::with('karyawan')
-            ->where('karyawan_id', $user->id)
-            ->get();
+        if ($user->role === 'admin') {
+            $penggajians = Penggajian::with('karyawan')->get();
+        } else {
+            $penggajians = Penggajian::with('karyawan')
+                ->where('karyawan_id', $user->id)
+                ->get();
+        }
+
+        return view('Penggajian.penggajian', [
+            'penggajians' => $penggajians,
+            'karyawans' => Karyawan::all(),
+        ]);
     }
-
-    return view('Penggajian.penggajian', [
-        'penggajians' => $penggajians,
-        'karyawans' => Karyawan::all()
-    ]);
-}
 
     public function create()
     {
         return view('Penggajian.formAddEditPenggajian', [
-            'karyawans' => Karyawan::all()
+            'karyawans' => Karyawan::all(),
         ]);
     }
 
@@ -53,10 +53,10 @@ class PenggajianController extends Controller
         }
 
         $penggajian = Penggajian::create([
-            'kode_penggajian' => 'PG-' . time(),
+            'kode_penggajian' => 'PG-'.time(),
             'karyawan_id' => $data['karyawan_id'],
             'tanggal' => $tanggal,
-            'gaji_pokok' => $data['gaji_pokok']
+            'gaji_pokok' => $data['gaji_pokok'],
         ]);
 
         return response()->json([
@@ -66,19 +66,18 @@ class PenggajianController extends Controller
         ], 201);
     }
 
-
     public function show(Request $request, $id)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    $penggajian = Penggajian::findOrFail($id);
+        $penggajian = Penggajian::findOrFail($id);
 
-    if ($user->role !== 'admin' && $penggajian->karyawan_id != $user->id) {
-        abort(403, 'Anda tidak memiliki akses ke data ini.');
+        if ($user->role !== 'admin' && $penggajian->karyawan_id != $user->id) {
+            abort(403, 'Anda tidak memiliki akses ke data ini.');
+        }
+
+        return $penggajian;
     }
-
-    return $penggajian;
-}
 
     public function update(Request $request, $id)
     {
@@ -93,7 +92,7 @@ class PenggajianController extends Controller
         $penggajian->update([
             'karyawan_id' => $data['karyawan_id'],
             'tanggal' => $data['tanggal'],
-            'gaji_pokok' => $data['gaji_pokok']
+            'gaji_pokok' => $data['gaji_pokok'],
         ]);
 
         return response()->json([
@@ -106,6 +105,7 @@ class PenggajianController extends Controller
     public function destroy($id)
     {
         Penggajian::findOrFail($id)->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Data penggajian berhasil dihapus.',

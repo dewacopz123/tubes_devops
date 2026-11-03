@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Jobdesk extends Model
 {
@@ -23,7 +23,7 @@ class Jobdesk extends Model
         static::creating(function ($model) {
             $latest = Jobdesk::latest('id')->first();
             $number = $latest ? $latest->id + 1 : 1;
-            $model->kode_jobdesk = 'JD' . str_pad($number, 3, '0', STR_PAD_LEFT);
+            $model->kode_jobdesk = 'JD'.str_pad($number, 3, '0', STR_PAD_LEFT);
         });
     }
 

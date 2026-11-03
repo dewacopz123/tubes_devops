@@ -4,8 +4,8 @@ namespace App\Exports;
 
 use App\Models\Jobdesk;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
 class JobdeskSheetExport implements FromCollection, WithHeadings, WithTitle
 {
@@ -15,7 +15,7 @@ class JobdeskSheetExport implements FromCollection, WithHeadings, WithTitle
             return [
                 $j->karyawans->pluck('nama')->implode(', ') ?: '-',
                 $j->nama_jobdesk ?? '-',
-                $j->tugas_utama ?? '-'
+                $j->tugas_utama ?? '-',
             ];
         });
     }

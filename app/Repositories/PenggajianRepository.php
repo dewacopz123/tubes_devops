@@ -25,6 +25,7 @@ class PenggajianRepository implements PenggajianRepositoryInterface
     {
         $penggajian = Penggajian::findOrFail($id);
         $penggajian->update($data);
+
         return $penggajian;
     }
 

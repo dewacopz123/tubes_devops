@@ -4,16 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ValidatesSekData;
 use App\Http\Controllers\Controller;
-use App\Models\Karyawan;
-use App\Models\Jobdesk;
 use App\Models\Absensi;
+use App\Models\Jobdesk;
+use App\Models\Karyawan;
 use App\Models\Penggajian;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class SyncController extends Controller
 {
@@ -40,7 +40,7 @@ class SyncController extends Controller
             $this->validationAttributes()
         );
 
-        $data['kode_karyawan'] = 'KRY-' . strtoupper(Str::random(6));
+        $data['kode_karyawan'] = 'KRY-'.strtoupper(Str::random(6));
         $data['password'] = Hash::make($request->input('password', '123456'));
 
         $karyawan = Karyawan::create($data);
@@ -164,7 +164,7 @@ class SyncController extends Controller
 
         $existingIds = $jobdesk->karyawans()
             ->pluck('karyawans.id')
-            ->map(fn($id) => (string) $id)
+            ->map(fn ($id) => (string) $id)
             ->toArray();
 
         $duplicateIds = array_intersect(
@@ -172,14 +172,14 @@ class SyncController extends Controller
             array_map('strval', $data['karyawan_id'])
         );
 
-        if (!empty($duplicateIds)) {
+        if (! empty($duplicateIds)) {
             $duplicateNames = Karyawan::whereIn('id', $duplicateIds)
                 ->pluck('nama')
                 ->implode(', ');
 
             return response()->json([
                 'success' => false,
-                'message' => 'Beberapa karyawan sudah ditugaskan ke jobdesk ini: ' . $duplicateNames,
+                'message' => 'Beberapa karyawan sudah ditugaskan ke jobdesk ini: '.$duplicateNames,
             ], 422);
         }
 
@@ -204,7 +204,7 @@ class SyncController extends Controller
             ->where('karyawans.id', $karyawanId)
             ->exists();
 
-        if (!$isAssigned) {
+        if (! $isAssigned) {
             return response()->json([
                 'success' => false,
                 'message' => 'Karyawan tidak terdaftar pada jobdesk ini.',
@@ -282,7 +282,7 @@ class SyncController extends Controller
             ->where('tanggal', $tanggal)
             ->first();
 
-        if (!$absensi) {
+        if (! $absensi) {
             return response()->json([
                 'success' => false,
                 'message' => 'Belum absen masuk',
@@ -346,6 +346,7 @@ class SyncController extends Controller
     public function destroyJobdesk($id)
     {
         Jobdesk::findOrFail($id)->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Jobdesk berhasil dihapus.',
@@ -366,7 +367,7 @@ class SyncController extends Controller
         }
 
         $penggajian = Penggajian::create([
-            'kode_penggajian' => 'PG-' . time(),
+            'kode_penggajian' => 'PG-'.time(),
             'karyawan_id' => $data['karyawan_id'],
             'tanggal' => $tanggal,
             'gaji_pokok' => $data['gaji_pokok'],
@@ -404,6 +405,7 @@ class SyncController extends Controller
     public function destroyPenggajian($id)
     {
         Penggajian::findOrFail($id)->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Data penggajian berhasil dihapus.',
@@ -415,7 +417,7 @@ class SyncController extends Controller
         $karyawan = Karyawan::findOrFail($id);
 
         $request->validate([
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if (
@@ -430,7 +432,7 @@ class SyncController extends Controller
             ->store('karyawan', 'public');
 
         $karyawan->update([
-            'foto' => $path
+            'foto' => $path,
         ]);
 
         return response()->json([
@@ -438,8 +440,8 @@ class SyncController extends Controller
             'message' => 'Foto berhasil diupload',
             'data' => [
                 'foto' => $path,
-                'foto_url' => asset('storage/' . $path)
-            ]
+                'foto_url' => asset('storage/'.$path),
+            ],
         ]);
     }
 }

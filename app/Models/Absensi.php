@@ -11,7 +11,7 @@ class Absensi extends Model
         'tanggal',
         'jam_masuk',
         'jam_keluar',
-        'status'
+        'status',
     ];
 
     public function karyawan()
@@ -19,6 +19,3 @@ class Absensi extends Model
         return $this->belongsTo(Karyawan::class);
     }
 }
-
-
-
