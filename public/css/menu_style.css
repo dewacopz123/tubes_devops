@@ -1,0 +1,1063 @@
+:root {
+    --sidebar-width: 250px;
+    --sidebar-width-collapsed: 80px;
+    --main-color: #ffffff;
+    --dark-color: #BDBDBD;
+    --light-bg: #F8F9FA;
+    --sidebar-bg: #F8F9FA;
+    --sidebar-link-hover: #fff;
+    --sidebar-active-color: #00ABB6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Helvetica';
+}
+
+/* Anti-flash: background & body base dideklarasikan paling awal
+   agar browser langsung render warna yang benar sejak frame pertama */
+html {
+    background-color: #F4F7FB;
+}
+
+body {
+    background-color: var(--light-bg);
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar & navbar pre-paint dengan warna yang benar
+   sebelum JS menambahkan class .collapsed */
+.sidebar {
+    background-color: #F4F7FB;
+}
+
+.sidebar-header,
+.top-navbar {
+    background-color: #00ABB6;
+}
+
+body.mobile-sidebar-open {
+    overflow: hidden;
+}
+
+/* Anti-flash: class ini diterapkan di <html> sebelum render
+   oleh script sync di navbar, agar sidebar & navbar langsung
+   muncul di posisi collapsed tanpa animasi saat page load */
+html.sidebar-will-collapse .sidebar {
+    width: var(--sidebar-width-collapsed);
+}
+
+html.sidebar-will-collapse .top-navbar {
+    left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+html.sidebar-will-collapse .main-wrapper {
+    margin-left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+/* -------------------- */
+/* 1. SIDEBAR STYLING   */
+/* -------------------- */
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #F4F7FB;
+    box-shadow: 2px 0 18px rgba(0, 0, 0, 0.08);
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    background-color: #00ABB6;
+    height: 70px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.sidebar-header .logo-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 12px 30px;
+}
+
+.sidebar-nav li {
+    margin: 10px 8px;
+}
+
+.sidebar-nav a img,
+.sidebar-nav .logout-link img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 8px;
+    object-fit: contain;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sidebar-nav a,
+.sidebar-nav .logout-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    text-decoration: none;
+    color: #7A8BA8;
+    font-size: 0.96rem;
+    border-radius: 18px;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    background: transparent;
+}
+
+.sidebar-nav .logout-link {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.sidebar-nav a span,
+.sidebar-nav .logout-link span {
+    font-weight: 600;
+    color: inherit;
+    transition: color 0.25s ease;
+}
+
+.sidebar-nav li:hover a,
+.sidebar-nav li:hover .logout-link {
+    color: #00ABB6;
+    background-color: rgba(0, 171, 182, 0.10);
+}
+
+.sidebar-nav li.active a {
+    background-color: #ffffff;
+    color: #00ABB6;
+    font-weight: 700;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.10);
+}
+
+.sidebar-nav li.active a img,
+.sidebar-nav li.active .logout-link img {
+    background: #ffffff;
+}
+
+.menu-divider {
+    font-size: 0.76rem;
+    color: #8B97A9;
+    padding: 24px 20px 10px;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+}
+
+.sidebar-info-box {
+    margin: 30px 15px 10px 10px;
+    padding: 10px;
+    background-color: var(--sidebar-active-color);
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    transition: opacity 0.3s;
+}
+
+.sidebar-info-box i {
+    font-size: 2rem;
+    margin-bottom: 1px;
+}
+
+.sidebar-info-box h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.sidebar-info-box p {
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.sidebar-info-box button {
+    background-color: white;
+    color: var(--sidebar-active-color);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* -------------------- */
+/* 2. MAIN WRAPPER      */
+/* -------------------- */
+
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* -------------------- */
+/* 3. TOP NAVBAR        */
+/* -------------------- */
+
+.top-navbar {
+    background-color: #00ABB6;
+    padding: 10px 20px;
+    height: 70px;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    position: fixed;
+    left: var(--sidebar-width);
+    right: 0;
+    width: calc(100% - var(--sidebar-width));
+    top: 0;
+    z-index: 100;
+    transition: left 0.25s ease, width 0.25s ease, background-color 0.2s ease;
+    color: #ffffff;
+}
+
+.sidebar.collapsed~.top-navbar {
+    left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+.sidebar.collapsed~.main-wrapper {
+    margin-left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #ffffff;
+    padding: 6px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    min-width: 36px;
+    min-height: 36px;
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navbar-title {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.search-bar {
+    position: relative;
+    flex: 1 1 420px;
+    max-width: 520px;
+    margin: 0 16px;
+    min-width: 180px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 16px 10px 42px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #222;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.search-bar input::placeholder {
+    color: #6b6b6b;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7a7a7a;
+    font-size: 0.95rem;
+}
+
+.card-content>div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.card-content label {
+    white-space: nowrap;
+    color: #333;
+    font-weight: 500;
+    margin-left: auto;
+    font-family: Helvetica;
+}
+
+.searchCategory {
+    display: flex;
+    flex: 1;
+    max-width: 250px;
+    padding: 8px 12px;
+    border: 1px solid var(--dark-color);
+    border-radius: 6px;
+    color: var(--dark-color);
+    background-color: white;
+    font-size: 0.95rem;
+    align-content: center;
+    margin-right: auto;
+    text-align: center;
+    justify-content: center;
+    font-family: Helvetica;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.user-profile .profile-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+
+/* -------------------- */
+/* 4. PAGE CONTENT      */
+/* -------------------- */
+
+.page-content {
+    padding-top: 100px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+}
+
+.card-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+    .main-wrapper {
+        width: calc(100% - var(--sidebar-width));
+        margin-left: var(--sidebar-width);
+    }
+
+    .top-navbar {
+        left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+    }
+
+    .page-content {
+        padding: 100px 20px 30px;
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        display: block;
+    }
+
+    .top-navbar,
+    .sidebar.collapsed~.top-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+        box-shadow: none;
+        z-index: 999;
+    }
+
+    .main-wrapper,
+    .sidebar.collapsed~.main-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .page-content {
+        padding-top: 140px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .sidebar-nav a,
+    .sidebar-nav .logout-link {
+        font-size: 15px;
+        padding: 14px 16px;
+    }
+
+    .sidebar-nav .logout-link span,
+    .sidebar-nav a span {
+        margin-left: 12px;
+    }
+
+    .sidebar-header {
+        justify-content: flex-start;
+        padding: 15px;
+        height: 70px;
+    }
+
+    .sidebar-header .logo-text {
+        font-size: 1.1rem;
+    }
+}
+
+.btn-primary {
+    background-color: #48BB78;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 50px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-warning {
+    background-color: #f6e05e;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-jobdesk {
+    background-color: var(--sidebar-active-color);
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-edit {
+    background-color: var(--sidebar-active-color);
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 50px;
+    text-align: center;
+    font-family: Helvetica;
+}
+
+.btn-primary,
+.btn-danger,
+.btn-delete,
+.btn-warning,
+.btn-jobdesk,
+.btn-edit,
+.btn-long,
+.btn-full,
+.btn-export-pill,
+.btn,
+button {
+    transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-danger:hover,
+.btn-delete:hover,
+.btn-warning:hover,
+.btn-jobdesk:hover,
+.btn-edit:hover,
+.btn-long:hover,
+.btn-full:hover,
+.btn-export-pill:hover,
+button:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+.badge:hover,
+.badge-success:hover,
+.badge-danger:hover,
+.badge-secondary:hover,
+.badge-biru:hover {
+    opacity: 0.9;
+    cursor: default;
+}
+
+/* -------------------- */
+/* 6. PAGE TRANSITION   */
+/* -------------------- */
+
+/* Sidebar dan navbar tidak ikut fade */
+.sidebar,
+.top-navbar {
+    will-change: width, left;
+    opacity: 1 !important;
+    animation: none !important;
+}
+
+/* Hanya konten utama yang fade masuk */
+@keyframes pageFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.main-wrapper {
+    animation: pageFadeIn 0.12s ease forwards;
+}
+
+/* Sembunyikan flash putih saat navigasi:
+   sidebar & navbar langsung visible, body background sama */
+html {
+    background-color: #F4F7FB;
+}
+
+body {
+    background-color: var(--light-bg);
+}
+
+/* -------------------- */
+/* 5. TOGGLE COLLAPSED  */
+/* -------------------- */
+
+.sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+}
+
+.sidebar.collapsed~.main-wrapper {
+    margin-left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+.sidebar.collapsed {
+    overflow-x: hidden;
+}
+
+.sidebar.collapsed .sidebar-nav a span,
+.sidebar.collapsed .sidebar-nav .logout-link span,
+.sidebar.collapsed .sidebar-header .logo-text,
+.sidebar.collapsed .sidebar-info-box h4,
+.sidebar.collapsed .sidebar-info-box p,
+.sidebar.collapsed .sidebar-info-box button,
+.sidebar.collapsed .menu-divider {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    font-family: helvetica;
+}
+
+.sidebar.collapsed .sidebar-nav a,
+.sidebar.collapsed .sidebar-nav .logout-link {
+    justify-content: center;
+    padding: 10px;
+    border-radius: 12px;
+    width: 54px;
+    margin: 0 auto;
+}
+
+/* hover saat collapsed: background pas di sekitar icon */
+.sidebar.collapsed .sidebar-nav li:hover a,
+.sidebar.collapsed .sidebar-nav li:hover .logout-link {
+    background-color: rgba(0, 171, 182, 0.12);
+}
+
+/* active saat collapsed */
+.sidebar.collapsed .sidebar-nav li.active a {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+.sidebar.collapsed .sidebar-info-box {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 20px 0;
+}
+
+.sidebar-logo {
+    width: 64px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+h3.logo-text {
+    color: white;
+    font-family: Helvetica;
+    font-weight: 700;
+}
+
+/* ---------TABEL----------- */
+.table-absensi {
+    margin: 20px 0;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    overflow-x: auto; /* penting untuk mobile */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* TABLE */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table,
+.table-absensi {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px; /* biar tidak rusak di desktop */
+    font-size: 0.95rem;
+    text-align: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* HEADER */
+.table-absensi thead {
+    color: #BDBDBD;
+    position: sticky;
+    top: 0;
+    background: #fff; /* wajib biar sticky tidak transparan */
+    z-index: 2;
+}
+
+.table-absensi thead th {
+    padding: 12px 24px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* BODY */
+.table-absensi tbody td {
+    padding: 12px 18px;
+    color: #333;
+    vertical-align: middle;
+}
+
+/* STRIPING */
+.table-absensi tbody tr:nth-child(even) {
+    background: #fbfcfd;
+}
+
+.table-absensi tbody tr:hover {
+    background: rgba(0, 171, 182, 0.06);
+}
+
+/* STATUS */
+.table-absensi .status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.status.present { background: #e6fffb; color: #007f74; }
+.status.absent { background: #fff1f2; color: #c53030; }
+.status.late { background: #fff7ed; color: #b45309; }
+
+/* ACTIONS */
+.table-absensi .actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* BUTTON */
+.table-absensi .action-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.table-absensi .action-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+    .table-responsive table,
+    .table-absensi {
+        min-width: 600px;
+        font-size: 0.85rem;
+    }
+
+    .table-absensi thead th {
+        padding: 10px 12px;
+    }
+
+    .table-absensi tbody td {
+        padding: 10px 12px;
+    }
+}
+
+/* 📱 SMALL PHONE */
+@media (max-width: 480px) {
+    .table-responsive table,
+    .table-absensi {
+        min-width: 520px;
+    }
+}
+
+/*PROFILE*/
+
+
+.profile {
+    padding-top: 100px;
+    /* cukup 100px agar tidak tertimpa navbar */
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    background: #fff;
+    min-height: calc(100vh - 60px);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #222;
+}
+
+.photo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.row {
+    display: flex;
+    gap: 15px;
+}
+
+.group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.group input {
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.group input:focus {
+    border-color: #f97316;
+}
+
+.group input[disabled] {
+    background-color: #f6f6f6;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.preview-large {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid #00ABB6;
+}
+
+.aksi-icon,
+.action-cell {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-btn {
+    border: none;
+    color: white;
+    border-radius: 6.28px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.icon-btn.edit {
+    background-color: #f6e05e
+}
+
+.icon-btn.delete {
+    background-color: #dc3545; /* merah */
+}
+
+.icon-btn:hover {
+    transform: scale(1.15);
+    opacity: 0.85;
+}
+
+.btn-long {
+    width: 230px;
+    padding: 12px;
+    font-size: 15px;
+}
+
+.button-group-horizontal {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-full {
+    flex: 1;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.page-title {
+    margin-bottom: 16px;
+}
+
+.status-badge.active {
+    background: #28a745;
+    color: #fff;
+}
+
+.status-badge.done {
+    background: #6c757d;
+    color: #fff;
+}
+
+.icon-btn i {
+    pointer-events: none;
+}
+
+.dashboard-container {
+    padding: 20px;
+}
+
+.clock-box {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+.stat-card p {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.success { border-left: 5px solid #28a745; }
+.danger { border-left: 5px solid #dc3545; }
+.warning { border-left: 5px solid #ffc107; }
+
+.badge {
+    display: inline-block;
+    width: 70px;      /* ukuran tetap */
+    text-align: center;
+    border: none;
+
+    padding: 4px 12px;
+    border-radius: 6.28px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.badge-success {
+    background-color: #28a745; /* hijau */
+}
+
+.badge-danger {
+    background-color: #dc3545; /* merah */
+}
+
+.badge-secondary {
+    background-color: #CBD5E0;
+}
+
+.badge-biru {
+    background-color: #00ABB6;
+}
+
+.jobdesk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 10px;
+}
+
+/* Biar judul gak turun */
+.jobdesk-header h3 {
+    margin: 0;
+}
+
+/* Pakai style export pill sebelumnya */
+.btn-export-pill {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 22px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-export-pill:hover {
+    background-color: #cfcfcf;
+}

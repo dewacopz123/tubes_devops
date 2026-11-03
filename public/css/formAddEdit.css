@@ -1,0 +1,171 @@
+:root {
+    --main-color: #ffffff;
+    --dark-color: #BDBDBD;
+    --light-bg: #F8F9FA;
+}
+
+.modal-form-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-form {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 400px;
+}
+
+.modal-form h3 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group select {
+    color: var(--dark-color);
+}
+
+.input-error {
+    color: #d93025;
+    font-size: 0.85rem;
+    margin-top: 6px;
+}
+
+.input-invalid {
+    border-color: #d93025;
+}
+
+#dialogContainer,
+#popupContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    pointer-events: none;
+    /* Kosong = tidak block klik; isi di dalamnya yang handle pointer-events */
+}
+
+#dialogContainer:empty,
+#popupContainer:empty {
+    display: none;
+}
+
+#dialogContainer > *,
+#popupContainer > * {
+    pointer-events: auto;
+}
+
+.dialog-overlay,
+.modal-form-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.dialog-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: min(420px, 90%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-box h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.dialog-box p,
+.dialog-box .dialog-text {
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.dialog-actions .btn,
+.dialog-actions .btn-danger,
+.dialog-actions .btn-jobdesk {
+    min-width: 100px;
+}
+
+.dialog-error-list {
+    color: #d93025;
+    margin-bottom: 20px;
+    font-size: 0.94rem;
+}
+
+#sek-toast-container {
+    position: fixed;
+    top: 88px;
+    right: 24px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.sek-toast {
+    min-width: 260px;
+    max-width: min(360px, calc(100vw - 32px));
+    padding: 14px 16px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sek-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sek-toast-success {
+    background: #16a34a;
+}
+
+.sek-toast-error {
+    background: #dc2626;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
