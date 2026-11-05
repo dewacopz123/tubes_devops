@@ -68,7 +68,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($absensis as $a)
+                        @forelse($absensis as $a)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ optional($a->karyawan)->nama ?? '-' }}</td>
@@ -86,7 +86,13 @@
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    Belum ada data absensi.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
