@@ -29,11 +29,21 @@ class PenggajianTest extends TestCase
     {
         $admin = $this->createKaryawan([
             'role' => 'admin',
-            'email' => 'admin@example.com',
+            'email' => 'admin'.(Karyawan::count() + 1).'@example.com',
         ]);
         $this->actingAs($admin);
 
         return $admin;
+    }
+
+    private function loginAsKaryawan(array $attributes = []): Karyawan
+    {
+        $karyawan = $this->createKaryawan(array_merge([
+            'role' => 'karyawan',
+        ], $attributes));
+        $this->actingAs($karyawan);
+
+        return $karyawan;
     }
 
     private function createPenggajian(array $attributes = []): Penggajian
@@ -48,9 +58,14 @@ class PenggajianTest extends TestCase
         ], $attributes));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FITUR 1: Kalkulator / Input Penggajian & Auto-Generated Code
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * PG-004
-     * Store data penggajian berhasil.
+     * PG-001: Store data penggajian berhasil dengan kode auto-generate.
      */
     public function test_store_penggajian_success()
     {
@@ -65,38 +80,56 @@ class PenggajianTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonFragment(['success' => true]);
+
+        $penggajian = Penggajian::where('karyawan_id', $karyawan->id)->first();
+        $this->assertNotNull($penggajian);
+        $this->assertStringStartsWith('PG-', $penggajian->kode_penggajian);
+        $this->assertEquals('2025-01-15', $penggajian->tanggal);
+        $this->assertEquals(5000000, $penggajian->gaji_pokok);
+    }
+
+    /**
+     * PG-002: Store data penggajian dengan format tanggal bergaris miring (d/m/Y).
+     */
+    public function test_store_penggajian_with_slash_date_format()
+    {
+        $this->loginAsAdmin();
+        $karyawan = $this->createKaryawan();
+
+        $response = $this->postJson('/penggajian', [
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => '25/01/2025',
+            'gaji_pokok' => 7500000,
+        ]);
+
+        $response->assertStatus(201);
         $this->assertDatabaseHas('penggajians', [
             'karyawan_id' => $karyawan->id,
-            'gaji_pokok' => 5000000,
+            'tanggal' => '2025-01-25',
+            'gaji_pokok' => 7500000,
         ]);
     }
 
     /**
-     * PG-002
-     * Menguji halaman penggajian dapat diakses oleh karyawan.
+     * PG-003: Store gagal ketika nominal gaji pokok bernilai negatif.
      */
-    public function test_index_page_can_be_accessed_as_karyawan()
-    {
-        $karyawan = $this->createKaryawan();
-        $this->actingAs($karyawan);
-        $response = $this->get('/penggajian');
-        $response->assertStatus(200);
-    }
-
-    /**
-     * PG-003
-     * Menguji halaman form tambah penggajian dapat diakses.
-     */
-    public function test_create_page_can_be_accessed()
+    public function test_store_fails_when_gaji_pokok_negative()
     {
         $this->loginAsAdmin();
-        $response = $this->get('/penggajian/create');
-        $response->assertStatus(200);
+        $karyawan = $this->createKaryawan();
+
+        $response = $this->postJson('/penggajian', [
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => '2025-01-15',
+            'gaji_pokok' => -500000,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('gaji_pokok');
     }
 
     /**
-     * PG-005
-     * Store gagal ketika karyawan tidak ditemukan.
+     * PG-004: Store gagal ketika karyawan tidak ditemukan (ID fiktif).
      */
     public function test_store_fails_when_karyawan_not_found()
     {
@@ -113,8 +146,7 @@ class PenggajianTest extends TestCase
     }
 
     /**
-     * PG-007
-     * Store gagal ketika tanggal valid.
+     * PG-005: Store gagal ketika tanggal tidak valid.
      */
     public function test_store_fails_when_tanggal_invalid()
     {
@@ -123,7 +155,7 @@ class PenggajianTest extends TestCase
 
         $response = $this->postJson('/penggajian', [
             'karyawan_id' => $karyawan->id,
-            'tanggal' => '01-15-2025',
+            'tanggal' => 'invalid-date',
             'gaji_pokok' => 5000000,
         ]);
 
@@ -132,27 +164,84 @@ class PenggajianTest extends TestCase
     }
 
     /**
-     * PG-007
-     * Store gagal ketika tanggal valid.
+     * PG-006: Store gagal ketika dilakukan oleh karyawan biasa (403 Forbidden).
      */
-    public function test_store_fails_when_tanggal_valid()
+    public function test_store_fails_as_karyawan()
     {
-        $this->loginAsAdmin();
-        $karyawan = $this->createKaryawan();
+        $karyawan = $this->loginAsKaryawan();
 
         $response = $this->postJson('/penggajian', [
             'karyawan_id' => $karyawan->id,
-            'tanggal' => '2025-13-01',
+            'tanggal' => '2025-01-15',
             'gaji_pokok' => 5000000,
         ]);
 
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors('tanggal');
+        $response->assertStatus(403);
     }
 
     /**
-     * PG-008
-     * Show data penggajian berhasil sebagai admin.
+     * PG-007: Halaman form tambah penggajian dapat diakses oleh admin.
+     */
+    public function test_create_page_can_be_accessed_as_admin()
+    {
+        $this->loginAsAdmin();
+        $response = $this->get('/penggajian/create');
+        $response->assertStatus(200);
+    }
+
+    /**
+     * PG-008: Halaman form tambah penggajian ditolak untuk karyawan biasa (403 Forbidden).
+     */
+    public function test_create_page_fails_as_karyawan()
+    {
+        $this->loginAsKaryawan();
+        $response = $this->get('/penggajian/create');
+        $response->assertStatus(403);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FITUR 2: Proteksi Kerahasiaan Slip Gaji Mandiri Karyawan
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * PG-009: Halaman index penggajian dapat diakses oleh admin dan menampilkan semua slip.
+     */
+    public function test_index_page_can_be_accessed_as_admin_and_shows_all_records()
+    {
+        $this->loginAsAdmin();
+        $karyawan1 = $this->createKaryawan(['nama' => 'Karyawan Satu']);
+        $karyawan2 = $this->createKaryawan(['nama' => 'Karyawan Dua']);
+
+        $this->createPenggajian(['karyawan_id' => $karyawan1->id, 'gaji_pokok' => 4000000]);
+        $this->createPenggajian(['karyawan_id' => $karyawan2->id, 'gaji_pokok' => 5000000]);
+
+        $response = $this->get('/penggajian');
+        $response->assertStatus(200);
+        $response->assertSee('Karyawan Satu');
+        $response->assertSee('Karyawan Dua');
+    }
+
+    /**
+     * PG-010: Halaman index penggajian sebagai karyawan hanya menampilkan slip miliknya.
+     */
+    public function test_index_page_can_be_accessed_as_karyawan_and_only_shows_own_record()
+    {
+        $me = $this->loginAsKaryawan(['nama' => 'Karyawan Mandiri']);
+        $other = $this->createKaryawan(['nama' => 'Karyawan Rahasia']);
+
+        $this->createPenggajian(['karyawan_id' => $me->id, 'gaji_pokok' => 4500000]);
+        $this->createPenggajian(['karyawan_id' => $other->id, 'gaji_pokok' => 9900000]);
+
+        $response = $this->get('/penggajian');
+        $response->assertStatus(200);
+        $response->assertSee('Karyawan Mandiri');
+        $response->assertDontSee('Karyawan Rahasia');
+    }
+
+    /**
+     * PG-011: Show data penggajian berhasil sebagai admin.
      */
     public function test_show_penggajian_success_as_admin()
     {
@@ -161,32 +250,28 @@ class PenggajianTest extends TestCase
 
         $response = $this->get("/penggajian/{$penggajian->id}");
         $response->assertStatus(200);
+        $response->assertJsonFragment(['id' => $penggajian->id]);
     }
 
     /**
-     * PG-009
-     * Show data penggajian berhasil sebagai pemilik data.
+     * PG-012: Show data penggajian berhasil sebagai pemilik data (karyawan owner).
      */
     public function test_show_penggajian_success_as_owner()
     {
-        $karyawan = $this->createKaryawan();
-        $this->actingAs($karyawan);
-
+        $karyawan = $this->loginAsKaryawan();
         $penggajian = $this->createPenggajian(['karyawan_id' => $karyawan->id]);
 
         $response = $this->get("/penggajian/{$penggajian->id}");
         $response->assertStatus(200);
+        $response->assertJsonFragment(['id' => $penggajian->id]);
     }
 
     /**
-     * PG-010
-     * Show gagal ketika karyawan bukan pemilik data.
+     * PG-013: Show gagal ketika karyawan mencoba melihat slip gaji orang lain (403 Forbidden).
      */
     public function test_show_penggajian_fails_as_non_owner()
     {
-        $karyawan = $this->createKaryawan();
-        $this->actingAs($karyawan);
-
+        $this->loginAsKaryawan();
         $otherKaryawan = $this->createKaryawan();
         $penggajian = $this->createPenggajian(['karyawan_id' => $otherKaryawan->id]);
 
@@ -195,8 +280,7 @@ class PenggajianTest extends TestCase
     }
 
     /**
-     * PG-011
-     * Show gagal ketika ID penggajian tidak ditemukan.
+     * PG-014: Show gagal ketika ID penggajian tidak ditemukan (404 Not Found).
      */
     public function test_show_non_existing_penggajian()
     {
@@ -205,9 +289,14 @@ class PenggajianTest extends TestCase
         $response->assertStatus(404);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FITUR 3: Pembaruan & Penghapusan Slip Gaji oleh Admin
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * PG-012
-     * Update data penggajian berhasil.
+     * PG-015: Update data penggajian berhasil sebagai admin.
      */
     public function test_update_penggajian_success()
     {
@@ -226,12 +315,71 @@ class PenggajianTest extends TestCase
         $this->assertDatabaseHas('penggajians', [
             'id' => $penggajian->id,
             'gaji_pokok' => 6000000,
+            'tanggal' => '2025-02-01',
         ]);
     }
 
     /**
-     * PG-013
-     * Update gagal ketika ID penggajian tidak ditemukan.
+     * PG-016: Update data penggajian dengan format tanggal bergaris miring (d/m/Y).
+     */
+    public function test_update_penggajian_with_slash_date()
+    {
+        $this->loginAsAdmin();
+        $karyawan = $this->createKaryawan();
+        $penggajian = $this->createPenggajian(['karyawan_id' => $karyawan->id]);
+
+        $response = $this->putJson("/penggajian/{$penggajian->id}", [
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => '10/02/2025',
+            'gaji_pokok' => 6500000,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('penggajians', [
+            'id' => $penggajian->id,
+            'tanggal' => '2025-02-10',
+            'gaji_pokok' => 6500000,
+        ]);
+    }
+
+    /**
+     * PG-017: Update gagal ketika dilakukan oleh karyawan biasa (403 Forbidden).
+     */
+    public function test_update_penggajian_fails_as_karyawan()
+    {
+        $karyawan = $this->loginAsKaryawan();
+        $penggajian = $this->createPenggajian(['karyawan_id' => $karyawan->id]);
+
+        $response = $this->putJson("/penggajian/{$penggajian->id}", [
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => '2025-02-01',
+            'gaji_pokok' => 6000000,
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * PG-018: Update gagal ketika nominal gaji pokok bernilai negatif.
+     */
+    public function test_update_fails_when_gaji_pokok_negative()
+    {
+        $this->loginAsAdmin();
+        $karyawan = $this->createKaryawan();
+        $penggajian = $this->createPenggajian(['karyawan_id' => $karyawan->id]);
+
+        $response = $this->putJson("/penggajian/{$penggajian->id}", [
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => '2025-02-01',
+            'gaji_pokok' => -100000,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('gaji_pokok');
+    }
+
+    /**
+     * PG-019: Update gagal ketika ID penggajian tidak ditemukan (404 Not Found).
      */
     public function test_update_non_existing_penggajian()
     {
@@ -248,8 +396,7 @@ class PenggajianTest extends TestCase
     }
 
     /**
-     * PG-014
-     * Delete data penggajian berhasil.
+     * PG-020: Delete data penggajian berhasil sebagai admin.
      */
     public function test_destroy_penggajian_success()
     {
@@ -264,8 +411,21 @@ class PenggajianTest extends TestCase
     }
 
     /**
-     * PG-015
-     * Delete gagal ketika ID penggajian tidak ditemukan.
+     * PG-021: Delete gagal ketika dilakukan oleh karyawan biasa (403 Forbidden).
+     */
+    public function test_destroy_penggajian_fails_as_karyawan()
+    {
+        $karyawan = $this->loginAsKaryawan();
+        $penggajian = $this->createPenggajian(['karyawan_id' => $karyawan->id]);
+
+        $response = $this->delete("/penggajian/{$penggajian->id}");
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('penggajians', ['id' => $penggajian->id]);
+    }
+
+    /**
+     * PG-022: Delete gagal ketika ID penggajian tidak ditemukan (404 Not Found).
      */
     public function test_destroy_non_existing_penggajian()
     {

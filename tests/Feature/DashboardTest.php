@@ -57,4 +57,3 @@ class DashboardTest extends TestCase
         $response->assertRedirect(route('dashboard'));
     }
 }
-
