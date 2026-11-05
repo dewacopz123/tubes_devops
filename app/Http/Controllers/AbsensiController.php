@@ -84,7 +84,7 @@ class AbsensiController extends Controller
             ], 400);
         }
 
-        if ($absensi->jam_keluar) {
+        if ($absensi->status === 'Selesai' || $absensi->jam_keluar) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal absen keluar. Anda sudah absen keluar.',

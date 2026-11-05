@@ -168,6 +168,32 @@ class PresensiTest extends TestCase
     }
 
     /**
+     * ABS-012
+     * Absen keluar ditolak ketika status hari ini sudah 'Selesai'
+     * meskipun jam keluar belum tercatat (data tidak konsisten).
+     */
+    public function test_keluar_fails_when_status_is_already_selesai()
+    {
+        $karyawan = $this->loginAsKaryawan();
+
+        Absensi::create([
+            'karyawan_id' => $karyawan->id,
+            'tanggal' => Carbon::today(),
+            'jam_masuk' => '08:00:00',
+            'status' => 'Selesai',
+        ]);
+
+        $response = $this->postJson('/absensi/keluar');
+
+        $response->assertStatus(400);
+        $response->assertJsonFragment(['success' => false]);
+        $this->assertDatabaseHas('absensis', [
+            'karyawan_id' => $karyawan->id,
+            'jam_keluar' => null,
+        ]);
+    }
+
+    /**
      * ABS-008
      * Absen masuk ditolak untuk karyawan berstatus Nonaktif.
      */
