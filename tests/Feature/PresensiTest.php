@@ -166,4 +166,24 @@ class PresensiTest extends TestCase
         $response->assertStatus(400);
         $response->assertJsonFragment(['success' => false]);
     }
+
+    /**
+     * ABS-008
+     * Absen masuk ditolak untuk karyawan berstatus Nonaktif.
+     */
+    public function test_masuk_fails_when_karyawan_is_nonaktif()
+    {
+        $karyawan = $this->createKaryawan([
+            'nama' => 'Karyawan Nonaktif',
+            'email' => 'nonaktif@example.com',
+            'status' => 'Nonaktif',
+        ]);
+        $this->actingAs($karyawan);
+
+        $response = $this->postJson('/absensi/masuk');
+
+        $response->assertStatus(403);
+        $response->assertJsonFragment(['success' => false]);
+        $this->assertDatabaseCount('absensis', 0);
+    }
 }

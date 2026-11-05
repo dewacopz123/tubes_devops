@@ -35,6 +35,13 @@ class AbsensiController extends Controller
         $karyawan_id = $user->id;
         $tanggal = Carbon::today();
 
+        if (strtolower(trim((string) $user->status)) !== 'aktif') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal absen masuk. Status karyawan Anda tidak aktif.',
+            ], 403);
+        }
+
         $cek = Absensi::where('karyawan_id', $karyawan_id)
             ->where('tanggal', $tanggal)
             ->first();
