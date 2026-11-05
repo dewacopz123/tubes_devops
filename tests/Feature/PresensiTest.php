@@ -212,4 +212,102 @@ class PresensiTest extends TestCase
         $response->assertJsonFragment(['success' => false]);
         $this->assertDatabaseCount('absensis', 0);
     }
+
+    /**
+     * ABS-009
+     * Admin melihat rekap absensi seluruh karyawan.
+     */
+    public function test_index_admin_can_see_all_absensi()
+    {
+        $this->loginAsAdmin();
+
+        $budi = $this->createKaryawan([
+            'nama' => 'Budi Santoso',
+            'email' => 'budi@example.com',
+        ]);
+        $siti = $this->createKaryawan([
+            'nama' => 'Siti Aminah',
+            'email' => 'siti@example.com',
+        ]);
+
+        Absensi::create([
+            'karyawan_id' => $budi->id,
+            'tanggal' => Carbon::today(),
+            'jam_masuk' => '08:00:00',
+            'status' => 'Masuk',
+        ]);
+
+        Absensi::create([
+            'karyawan_id' => $siti->id,
+            'tanggal' => Carbon::today(),
+            'jam_masuk' => '08:15:00',
+            'status' => 'Masuk',
+        ]);
+
+        $response = $this->get('/absensi');
+
+        $response->assertStatus(200);
+        $response->assertViewHas('absensis', function ($absensis) {
+            return $absensis->count() === 2;
+        });
+        $response->assertSee('Budi Santoso');
+        $response->assertSee('Siti Aminah');
+    }
+
+    /**
+     * ABS-010
+     * Karyawan biasa hanya melihat riwayat absensi miliknya sendiri.
+     */
+    public function test_index_karyawan_only_sees_own_absensi()
+    {
+        $budi = $this->createKaryawan([
+            'nama' => 'Budi Santoso',
+            'email' => 'budi@example.com',
+        ]);
+        $siti = $this->createKaryawan([
+            'nama' => 'Siti Aminah',
+            'email' => 'siti@example.com',
+        ]);
+        $this->actingAs($budi);
+
+        Absensi::create([
+            'karyawan_id' => $budi->id,
+            'tanggal' => Carbon::today(),
+            'jam_masuk' => '08:00:00',
+            'status' => 'Masuk',
+        ]);
+
+        Absensi::create([
+            'karyawan_id' => $siti->id,
+            'tanggal' => Carbon::today(),
+            'jam_masuk' => '08:15:00',
+            'status' => 'Masuk',
+        ]);
+
+        $response = $this->get('/absensi');
+
+        $response->assertStatus(200);
+        $response->assertViewHas('absensis', function ($absensis) {
+            return $absensis->count() === 1;
+        });
+        $response->assertSee('budi@example.com');
+        $response->assertDontSee('siti@example.com');
+    }
+
+    /**
+     * ABS-011
+     * Halaman rekap menampilkan empty state saat belum ada data absensi.
+     */
+    public function test_index_shows_empty_state_when_no_absensi()
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->get('/absensi');
+
+        $response->assertStatus(200);
+        $response->assertViewHas('absensis', function ($absensis) {
+            return $absensis->count() === 0;
+        });
+        $response->assertSee('Belum ada data absensi.');
+    }
 }
