@@ -40,13 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/penggajian/{id}', [PenggajianController::class, 'update'])->whereNumber('id');
     Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy'])->whereNumber('id');
 
-    Route::get('/karyawan', [KaryawanController::class, 'index']);
-    Route::get('/karyawan/form', [KaryawanController::class, 'form']);
-    Route::get('/karyawan/{id}', [KaryawanController::class, 'show'])->whereNumber('id');
-    Route::post('/karyawan', [KaryawanController::class, 'store']);
-    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
-    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
-
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::match(['post', 'put'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/upload-photo', [ProfileController::class, 'uploadPhoto'])->name('profile.upload-photo');
@@ -59,6 +52,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return redirect()->route('dashboard');
     });
+
+    Route::get('/karyawan', [KaryawanController::class, 'index']);
+    Route::get('/karyawan/form', [KaryawanController::class, 'form']);
+    Route::get('/karyawan/{id}', [KaryawanController::class, 'show'])->whereNumber('id');
+    Route::post('/karyawan', [KaryawanController::class, 'store']);
+    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
+    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
