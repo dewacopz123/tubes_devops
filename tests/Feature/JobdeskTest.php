@@ -235,6 +235,29 @@ class JobdeskTest extends TestCase
         $response->assertSee($karyawan2->nama);
     }
 
+    public function test_assign_rejects_duplicate_karyawan_ids()
+    {
+        $this->login();
+
+        $jobdesk = $this->createJobdesk();
+        $karyawan = $this->createKaryawan();
+
+        $response = $this->postJson('/jobdesk/assign', [
+            'jobdesk_id' => $jobdesk->id,
+            'karyawan_id' => [
+                $karyawan->id,
+                $karyawan->id,
+            ],
+        ]);
+
+        $response->assertStatus(422);
+
+        $this->assertDatabaseMissing('jobdesk_karyawan', [
+            'jobdesk_id' => $jobdesk->id,
+            'karyawan_id' => $karyawan->id,
+        ]);
+    }
+
     public function test_remove_karyawan_success()
     {
         $this->login();
