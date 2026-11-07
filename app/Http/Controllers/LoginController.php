@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureKaryawanAktif;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class LoginController extends Controller
 
         if ($user->status !== 'Aktif') {
             return back()->withErrors([
-                'email' => 'Your account is not active',
+                'email' => EnsureKaryawanAktif::MESSAGE,
             ])->withInput()->with('active', 'login');
         }
 

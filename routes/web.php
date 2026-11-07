@@ -16,7 +16,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/register', [LoginController::class, 'register'])->name('register.process');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'aktif'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -41,11 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy'])->whereNumber('id');
 
     Route::get('/karyawan', [KaryawanController::class, 'index']);
-    Route::get('/karyawan/form', [KaryawanController::class, 'form']);
     Route::get('/karyawan/{id}', [KaryawanController::class, 'show'])->whereNumber('id');
-    Route::post('/karyawan', [KaryawanController::class, 'store']);
-    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
-    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::match(['post', 'put'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -55,13 +51,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/penggajian', [ExportController::class, 'penggajian']);
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'aktif', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return redirect()->route('dashboard');
     });
+
+    // Manajemen master data karyawan hanya untuk admin
+    Route::get('/karyawan/form', [KaryawanController::class, 'form']);
+    Route::post('/karyawan', [KaryawanController::class, 'store']);
+    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
+    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
 });
 
-Route::middleware(['auth', 'role:karyawan'])->group(function () {
+Route::middleware(['auth', 'aktif', 'role:karyawan'])->group(function () {
     Route::get('/karyawan/dashboard', function () {
         return redirect()->route('dashboard');
     });

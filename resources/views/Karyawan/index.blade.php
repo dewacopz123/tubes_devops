@@ -65,6 +65,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>Telepon</th>
@@ -79,6 +80,7 @@
                             @forelse($karyawans as $k)
                                 <tr data-nama="{{ strtolower($k->nama) }}" data-role="{{ strtolower($k->role) }}">
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $k->kode_karyawan }}</td>
                                     <td>{{ $k->nama }}</td>
                                     <td>{{ $k->email }}</td>
                                     <td>{{ $k->telepon ?? '-' }}</td>
@@ -101,7 +103,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" style="text-align:center">
+                                    <td colspan="8" style="text-align:center">
                                         Data karyawan belum tersedia
                                     </td>
                                 </tr>
@@ -121,7 +123,7 @@
     <div id="dialogContainer"></div>
     <script src="/js/navbar.js?v=20260521"></script>
     <script src="/js/sek-notify.js?v=20260521"></script>
-    <script src="/js/data_karyawan.js?v=20260521"></script>
+    <script src="/js/data_karyawan.js?v=20261107"></script>
 
 </body>
 

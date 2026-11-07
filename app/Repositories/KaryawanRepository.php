@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Karyawan;
+use Illuminate\Support\Facades\DB;
 
 class KaryawanRepository implements KaryawanRepositoryInterface
 {
@@ -29,10 +30,22 @@ class KaryawanRepository implements KaryawanRepositoryInterface
         return $karyawan;
     }
 
+    /**
+     * Hapus karyawan beserta relasi pivot jobdesk-nya.
+     * Mengembalikan false (bukan exception) jika data sudah tidak ada.
+     */
     public function delete($id)
     {
-        $karyawan = Karyawan::findOrFail($id);
+        $karyawan = Karyawan::find($id);
 
-        return $karyawan->delete();
+        if (! $karyawan) {
+            return false;
+        }
+
+        return DB::transaction(function () use ($karyawan) {
+            $karyawan->jobdesks()->detach();
+
+            return (bool) $karyawan->delete();
+        });
     }
 }

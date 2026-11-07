@@ -43,6 +43,13 @@
     margin-top: 6px;
 }
 
+.form-hint {
+    display: block;
+    color: #5f6368;
+    font-size: 0.85rem;
+    margin: 6px 0 12px;
+}
+
 .input-invalid {
     border-color: #d93025;
 }

@@ -7,6 +7,11 @@
             <input type="hidden" id="mode" value="create">
             <input type="hidden" id="karyawanId">
 
+            <!-- <p class="form-hint" id="infoAutoGenerate">
+                <i class="fas fa-info-circle"></i>
+                Kode karyawan (KRY-XXXXXX) dibuat otomatis. Password awal: <strong>123456</strong>.
+            </p> -->
+
             <div class="form-group">
                 <label for="namaKaryawan">Nama</label>
                 <input type="text" id="namaKaryawan" class="form-control" required />
@@ -41,6 +46,7 @@
                     <option value="Aktif">Aktif</option>
                     <option value="Nonaktif">Nonaktif</option>
                 </select>
+                <!-- <small class="form-hint">Status Nonaktif akan langsung mengunci akses login karyawan.</small> -->
                 <div class="input-error" id="error-statusKaryawan"></div>
             </div>
 

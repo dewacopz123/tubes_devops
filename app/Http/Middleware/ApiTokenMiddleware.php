@@ -22,6 +22,10 @@ class ApiTokenMiddleware
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        if ($karyawan->status !== 'Aktif') {
+            return response()->json(['message' => EnsureKaryawanAktif::MESSAGE], 403);
+        }
+
         Auth::login($karyawan);
 
         return $next($request);
