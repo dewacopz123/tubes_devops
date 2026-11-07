@@ -105,33 +105,89 @@ class ApiSyncTest extends TestCase
 
     public function test_api_jobdesk_crud_and_assign()
     {
-        // Store
-        $storeResponse = $this->withHeaders($this->authHeaders())->postJson('/api/jobdesks', [
-            'nama_jobdesk' => 'Backend Dev',
-            'tugas_utama' => 'Membangun API',
+        // Buat karyawan kedua untuk menguji multi-assignment
+        $karyawan2 = Karyawan::create([
+            'kode_karyawan' => 'KRY-TEST02',
+            'nama' => 'Karyawan Kedua',
+            'email' => 'karyawan2.sync@example.com',
+            'telepon' => '081234567892',
+            'password' => Hash::make('password'),
+            'role' => 'karyawan',
+            'status' => 'Aktif',
         ]);
+
+        // 1. Store Jobdesk
+        $storeResponse = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/jobdesks', [
+                'nama_jobdesk' => 'Backend Dev',
+                'tugas_utama' => 'Membangun API',
+            ]);
+
         $storeResponse->assertStatus(201);
         $jobdeskId = $storeResponse->json('data.id');
 
-        // Show
-        $showResponse = $this->withHeaders($this->authHeaders())->getJson("/api/jobdesks/{$jobdeskId}");
+        // 2. Show Jobdesk
+        $showResponse = $this->withHeaders($this->authHeaders())
+            ->getJson("/api/jobdesks/{$jobdeskId}");
+
         $showResponse->assertStatus(200);
 
-        // Assign
-        $assignResponse = $this->withHeaders($this->authHeaders())->postJson('/api/jobdesks/assign', [
-            'jobdesk_id' => $jobdeskId,
-            'karyawan_id' => [$this->admin->id],
-        ]);
+        // 3. Assign dua karyawan sekaligus
+        $assignResponse = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/jobdesks/assign', [
+                'jobdesk_id' => $jobdeskId,
+                'karyawan_id' => [$this->admin->id, $karyawan2->id],
+            ]);
+
         $assignResponse->assertStatus(200);
 
-        // Remove
+        // Pastikan kedua karyawan masuk ke tabel pivot
+        $this->assertDatabaseHas('jobdesk_karyawan', [
+            'jobdesk_id' => $jobdeskId,
+            'karyawan_id' => $this->admin->id,
+        ]);
+
+        $this->assertDatabaseHas('jobdesk_karyawan', [
+            'jobdesk_id' => $jobdeskId,
+            'karyawan_id' => $karyawan2->id,
+        ]);
+
+        // 4. Uji penolakan ID karyawan duplikat
+        $duplicateResponse = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/jobdesks/assign', [
+                'jobdesk_id' => $jobdeskId,
+                'karyawan_id' => [$this->admin->id, $this->admin->id],
+            ]);
+
+        $duplicateResponse->assertStatus(422);
+
+        // 5. Remove satu karyawan
         $removeResponse = $this->withHeaders($this->authHeaders())
             ->deleteJson("/api/jobdesks/{$jobdeskId}/karyawans/{$this->admin->id}");
+
         $removeResponse->assertStatus(200);
 
-        // Destroy
-        $destroyResponse = $this->withHeaders($this->authHeaders())->deleteJson("/api/jobdesks/{$jobdeskId}");
+        // Pastikan relasi admin sudah terhapus
+        $this->assertDatabaseMissing('jobdesk_karyawan', [
+            'jobdesk_id' => $jobdeskId,
+            'karyawan_id' => $this->admin->id,
+        ]);
+
+        // Pastikan karyawan kedua masih terhubung
+        $this->assertDatabaseHas('jobdesk_karyawan', [
+            'jobdesk_id' => $jobdeskId,
+            'karyawan_id' => $karyawan2->id,
+        ]);
+
+        // 6. Destroy Jobdesk
+        $destroyResponse = $this->withHeaders($this->authHeaders())
+            ->deleteJson("/api/jobdesks/{$jobdeskId}");
+
         $destroyResponse->assertStatus(200);
+
+        $this->assertDatabaseMissing('jobdesks', [
+            'id' => $jobdeskId,
+        ]);
     }
 
     public function test_api_absensi_crud()

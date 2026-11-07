@@ -98,7 +98,7 @@ class JobdeskController extends Controller
             [
                 'jobdesk_id' => ['required', 'exists:jobdesks,id'],
                 'karyawan_id' => ['required', 'array', 'min:1'],
-                'karyawan_id.*' => ['required', 'exists:karyawans,id'],
+                'karyawan_id.*' => ['required', 'distinct', 'exists:karyawans,id'],
             ],
             $this->validationMessages(),
             $this->validationAttributes()
