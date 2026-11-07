@@ -54,35 +54,16 @@ class ProfileController extends Controller
             ]);
 
             $karyawan = Auth::user();
-
-            if (! $karyawan) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User tidak ditemukan',
-                ], 401);
-            }
-
             $realPath = $request->file('foto')->getRealPath();
 
-            if (method_exists(Cloudinary::getFacadeRoot(), 'uploadApi')) {
-                $uploadResponse = Cloudinary::uploadApi()->upload(
-                    $realPath,
-                    [
-                        'folder' => 'sek/profile',
-                    ]
-                );
-                $uploadedFileUrl = $uploadResponse['secure_url'] ?? $uploadResponse['url'] ?? null;
-            } else {
-                $uploadResponse = Cloudinary::upload(
-                    $realPath,
-                    [
-                        'folder' => 'sek/profile',
-                    ]
-                );
-                $uploadedFileUrl = method_exists($uploadResponse, 'getSecurePath')
-                    ? $uploadResponse->getSecurePath()
-                    : ($uploadResponse['secure_url'] ?? (string) $uploadResponse);
-            }
+            $uploadResponse = Cloudinary::uploadApi()->upload(
+                $realPath,
+                [
+                    'folder' => 'sek/profile',
+                ]
+            );
+
+            $uploadedFileUrl = $uploadResponse['secure_url'] ?? $uploadResponse['url'] ?? null;
 
             $karyawan->foto = $uploadedFileUrl;
             $karyawan->save();

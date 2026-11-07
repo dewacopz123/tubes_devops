@@ -125,4 +125,68 @@ class CloudinaryUploadTest extends TestCase
         $karyawan->refresh();
         $this->assertNull($karyawan->foto);
     }
+
+    /**
+     * Test Case 4:
+     * Upload foto gagal ketika user belum login / unauthenticated (status 401).
+     */
+    public function test_upload_photo_fails_when_unauthenticated()
+    {
+        $file = UploadedFile::fake()->image('avatar.png', 300, 300)->size(500);
+
+        $response = $this->postJson('/profile/upload-photo', [
+            'foto' => $file,
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Test Case 5:
+     * Upload foto menangani error saat Cloudinary melempar Exception (status 500).
+     */
+    public function test_upload_photo_returns_500_when_cloudinary_throws_exception()
+    {
+        $karyawan = $this->createKaryawan();
+        $this->actingAs($karyawan);
+
+        $mockUploadApi = Mockery::mock(UploadApi::class);
+        $mockUploadApi->shouldReceive('upload')
+            ->once()
+            ->andThrow(new \Exception('Cloudinary upload failure'));
+
+        Cloudinary::shouldReceive('uploadApi')
+            ->andReturn($mockUploadApi);
+
+        $file = UploadedFile::fake()->image('avatar.png', 300, 300)->size(500);
+
+        $response = $this->postJson('/profile/upload-photo', [
+            'foto' => $file,
+        ]);
+
+        $response->assertStatus(500);
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Cloudinary upload failure',
+        ]);
+    }
+
+    /**
+     * Test Case 6:
+     * Memverifikasi aksesor foto_url di Model Karyawan menangani HTTPS URL, HTTP URL, file lokal, dan null.
+     */
+    public function test_karyawan_foto_url_accessor_handles_various_paths()
+    {
+        $karyawan = $this->createKaryawan(['foto' => null]);
+        $this->assertNull($karyawan->foto_url);
+
+        $karyawan->foto = 'https://res.cloudinary.com/dummy/image/upload/sample.png';
+        $this->assertEquals('https://res.cloudinary.com/dummy/image/upload/sample.png', $karyawan->foto_url);
+
+        $karyawan->foto = 'http://example.com/sample.png';
+        $this->assertEquals('http://example.com/sample.png', $karyawan->foto_url);
+
+        $karyawan->foto = 'foto_lokal.png';
+        $this->assertStringContainsString('storage/foto_lokal.png', $karyawan->foto_url);
+    }
 }
