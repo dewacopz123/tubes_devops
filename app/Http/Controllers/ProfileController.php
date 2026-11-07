@@ -7,6 +7,7 @@ use App\Models\Karyawan;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -48,26 +49,21 @@ class ProfileController extends Controller
     public function uploadPhoto(Request $request)
     {
         try {
-
             $request->validate([
                 'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
             $karyawan = Auth::user();
+            $realPath = $request->file('foto')->getRealPath();
 
-            if (! $karyawan) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User tidak ditemukan',
-                ], 401);
-            }
-
-            $uploadedFileUrl = Cloudinary::upload(
-                $request->file('foto')->getRealPath(),
+            $uploadResponse = Cloudinary::uploadApi()->upload(
+                $realPath,
                 [
                     'folder' => 'sek/profile',
                 ]
-            )->getSecurePath();
+            );
+
+            $uploadedFileUrl = $uploadResponse['secure_url'] ?? $uploadResponse['url'] ?? null;
 
             $karyawan->foto = $uploadedFileUrl;
             $karyawan->save();
@@ -78,6 +74,8 @@ class ProfileController extends Controller
                 'foto_url' => $uploadedFileUrl,
             ]);
 
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (\Throwable $e) {
 
             \Log::error('Cloudinary Upload Error', [

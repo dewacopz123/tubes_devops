@@ -30,8 +30,10 @@ dari localStorage SEBELUM browser paint frame pertama --}}
                         src="/asset/Icon/dashboard.png"><span>Dashboard</span></a></li>
             <li class="{{ request()->is('absensi*') ? 'active' : '' }}"><a href="{{ url('/absensi') }}"><img
                         src="/asset/Icon/absensi.png"><span>Absensi</span></a></li>
+            @if (auth()->check() && auth()->user()->role === 'admin')
             <li class="{{ request()->is('karyawan*') ? 'active' : '' }}"><a href="{{ url('/karyawan') }}"><img
                         src="/asset/Icon/data_karyawan.png"><span>Data Karyawan</span></a></li>
+            @endif
             <li class="{{ request()->is('jobdesk*') ? 'active' : '' }}"><a href="{{ url('/jobdesk') }}"><img
                         src="/asset/Icon/data_jobdesk.png"><span>Data Jobdesk</span></a></li>
             <li class="{{ request()->is('penggajian*') ? 'active' : '' }}"><a href="{{ url('/penggajian') }}"><img
