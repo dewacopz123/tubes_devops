@@ -41,6 +41,11 @@ class RoleAccessTest extends TestCase
         $responseDashboard = $this->get('/admin/dashboard');
         $responseDashboard->assertRedirect(route('dashboard'));
 
+        // Menu Data Karyawan tampil untuk admin di dashboard
+        $responseDashboardView = $this->get('/dashboard');
+        $responseDashboardView->assertStatus(200);
+        $responseDashboardView->assertSee('Data Karyawan');
+
         // Akses halaman manajemen data karyawan
         $responseKaryawan = $this->get('/karyawan');
         $responseKaryawan->assertStatus(200);
@@ -62,6 +67,11 @@ class RoleAccessTest extends TestCase
         ]);
 
         $this->actingAs($karyawan);
+
+        // Menu Data Karyawan disembunyikan untuk karyawan di dashboard
+        $responseDashboardView = $this->get('/dashboard');
+        $responseDashboardView->assertStatus(200);
+        $responseDashboardView->assertDontSee('Data Karyawan');
 
         // Karyawan biasa mencoba akses dashboard admin
         $responseAdminDashboard = $this->get('/admin/dashboard');
