@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Karyawan;
+use Cloudinary\Api\ApiResponse;
+use Cloudinary\Api\Upload\UploadApi;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -44,17 +46,20 @@ class CloudinaryUploadTest extends TestCase
 
         $fakeImageUrl = 'https://res.cloudinary.com/dummy-cloud/image/upload/v1234567890/sek/profile/foto_ilham.jpg';
 
-        $mockMedia = Mockery::mock();
-        $mockMedia->shouldReceive('getSecurePath')
-            ->once()
-            ->andReturn($fakeImageUrl);
+        $apiResponse = new ApiResponse([
+            'secure_url' => $fakeImageUrl,
+        ], []);
 
-        Cloudinary::shouldReceive('upload')
+        $mockUploadApi = Mockery::mock(UploadApi::class);
+        $mockUploadApi->shouldReceive('upload')
             ->once()
             ->withArgs(function ($path, $options) {
                 return isset($options['folder']) && $options['folder'] === 'sek/profile';
             })
-            ->andReturn($mockMedia);
+            ->andReturn($apiResponse);
+
+        Cloudinary::shouldReceive('uploadApi')
+            ->andReturn($mockUploadApi);
 
         $file = UploadedFile::fake()->image('avatar.png', 300, 300)->size(500); // 500 KB <= 2MB
 

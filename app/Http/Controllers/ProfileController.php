@@ -62,12 +62,27 @@ class ProfileController extends Controller
                 ], 401);
             }
 
-            $uploadedFileUrl = Cloudinary::upload(
-                $request->file('foto')->getRealPath(),
-                [
-                    'folder' => 'sek/profile',
-                ]
-            )->getSecurePath();
+            $realPath = $request->file('foto')->getRealPath();
+
+            if (method_exists(Cloudinary::getFacadeRoot(), 'uploadApi')) {
+                $uploadResponse = Cloudinary::uploadApi()->upload(
+                    $realPath,
+                    [
+                        'folder' => 'sek/profile',
+                    ]
+                );
+                $uploadedFileUrl = $uploadResponse['secure_url'] ?? $uploadResponse['url'] ?? null;
+            } else {
+                $uploadResponse = Cloudinary::upload(
+                    $realPath,
+                    [
+                        'folder' => 'sek/profile',
+                    ]
+                );
+                $uploadedFileUrl = method_exists($uploadResponse, 'getSecurePath')
+                    ? $uploadResponse->getSecurePath()
+                    : ($uploadResponse['secure_url'] ?? (string) $uploadResponse);
+            }
 
             $karyawan->foto = $uploadedFileUrl;
             $karyawan->save();
