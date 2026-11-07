@@ -28,9 +28,15 @@ class Karyawan extends Authenticatable
 
     public function getFotoUrlAttribute()
     {
-        return $this->foto
-            ? asset('storage/'.$this->foto)
-            : null;
+        if (! $this->foto) {
+            return null;
+        }
+
+        if (str_starts_with($this->foto, 'http://') || str_starts_with($this->foto, 'https://')) {
+            return $this->foto;
+        }
+
+        return asset('storage/'.$this->foto);
     }
 
     protected $hidden = ['password', 'api_token'];
