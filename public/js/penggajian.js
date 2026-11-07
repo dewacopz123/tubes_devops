@@ -92,6 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("karyawan_id").value = data.karyawan_id;
             document.getElementById("tanggal").value = data.tanggal;
             document.getElementById("gaji_pokok").value = data.gaji_pokok;
+            const bonusField = document.getElementById("bonus");
+            if (bonusField) bonusField.value = data.bonus ?? "";
         };
     });
 
@@ -148,6 +150,14 @@ document.addEventListener("DOMContentLoaded", () => {
             data.append("karyawan_id", document.getElementById("karyawan_id").value);
             data.append("tanggal",     document.getElementById("tanggal").value);
             data.append("gaji_pokok",  document.getElementById("gaji_pokok").value);
+            const bonusInput = document.getElementById("bonus");
+            if (bonusInput && bonusInput.value !== "") {
+                data.append("bonus", bonusInput.value);
+            }
+            const hitungOtomatis = document.getElementById("hitung_otomatis_bonus");
+            if (hitungOtomatis && hitungOtomatis.checked) {
+                data.append("hitung_otomatis_bonus", "1");
+            }
 
             let url = "/penggajian";
             if (mode === "edit") {

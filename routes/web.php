@@ -34,9 +34,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/jobdesk/{jobdesk}/karyawan/{karyawan}', [JobdeskController::class, 'removeKaryawan']);
 
     Route::get('/penggajian', [PenggajianController::class, 'index']);
+    Route::get('/penggajian/summary', [PenggajianController::class, 'summary']);
     Route::get('/penggajian/create', [PenggajianController::class, 'create']);
     Route::post('/penggajian', [PenggajianController::class, 'store']);
     Route::get('/penggajian/{id}', [PenggajianController::class, 'show'])->whereNumber('id');
+    Route::get('/penggajian/{id}/pdf', [PenggajianController::class, 'downloadPdf'])->whereNumber('id');
+    Route::get('/penggajian/{id}/download-pdf', [PenggajianController::class, 'downloadPdf'])->whereNumber('id');
     Route::put('/penggajian/{id}', [PenggajianController::class, 'update'])->whereNumber('id');
     Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy'])->whereNumber('id');
 

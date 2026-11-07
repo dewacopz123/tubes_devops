@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            {{-- BUTTON TAMBAH --}}
+            {{-- BUTTON TAMBAH & EXPORT --}}
             @auth
                 <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:4px;">
                     @if($isAdmin)
@@ -54,15 +54,18 @@
                         </button>
                     @endif
                     <button type="button" class="btn btn-export-pill" onclick="window.location.href='/export/penggajian'">
-                        <i class="fas fa-file-excel"></i> Export Penggajian
+                        <i class="fas fa-file-excel"></i> Export Excel
                     </button>
+                    <a href="/penggajian/summary" class="btn btn-export-pill" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="fas fa-chart-line"></i> Summary Finansial
+                    </a>
                 </div>
             @endauth
 
 
             {{-- TABLE --}}
             <div class="card-content">
-                <h3>Tabel Data Penggajian</h3>
+                <h3>Tabel Data Penggajian &amp; Slip Gaji</h3>
 
                 <div class="table-responsive">
                     <table class="table-absensi">
@@ -73,6 +76,9 @@
                                 <th>Nama Karyawan</th>
                                 <th>Tanggal</th>
                                 <th>Gaji Pokok</th>
+                                <th>Bonus Kehadiran</th>
+                                <th>Total Gaji</th>
+                                <th>Slip PDF</th>
                                 @if($isAdmin)
                                     <th>Aksi</th>
                                 @endif
@@ -88,6 +94,13 @@
                                     <td>{{ optional($pg->karyawan)->nama ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($pg->tanggal)->format('d-m-Y') }}</td>
                                     <td>Rp {{ number_format($pg->gaji_pokok, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($pg->bonus ?? 0, 0, ',', '.') }}</td>
+                                    <td><strong>Rp {{ number_format($pg->total_gaji > 0 ? $pg->total_gaji : ($pg->gaji_pokok + ($pg->bonus ?? 0)), 0, ',', '.') }}</strong></td>
+                                    <td>
+                                        <a href="/penggajian/{{ $pg->id }}/pdf" class="badge badge-success" title="Download Slip PDF" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                                            <i class="fas fa-file-pdf"></i> Unduh PDF
+                                        </a>
+                                    </td>
 
                                     @if($isAdmin)
                                         <td>
@@ -100,7 +113,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" style="text-align:center">
+                                    <td colspan="{{ $isAdmin ? 9 : 8 }}" style="text-align:center">
                                         Data penggajian belum tersedia
                                     </td>
                                 </tr>
