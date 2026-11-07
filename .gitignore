@@ -25,5 +25,6 @@ Thumbs.db
 jalankan.bat
 *.pdf
 coverage.xml
-
+*.sqlite
+*.sqlite-journal
 
