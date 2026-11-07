@@ -54,6 +54,8 @@ trait ValidatesSekData
             'karyawan_id' => ['required', 'exists:karyawans,id'],
             'tanggal' => ['required', 'date'],
             'gaji_pokok' => ['required', 'numeric', 'min:0'],
+            'bonus' => ['nullable', 'numeric', 'min:0'],
+            'hitung_otomatis_bonus' => ['nullable', 'boolean'],
         ];
     }
 
@@ -108,6 +110,7 @@ trait ValidatesSekData
             'jobdesk_id' => 'Jobdesk',
             'tanggal' => 'Tanggal',
             'gaji_pokok' => 'Gaji pokok',
+            'bonus' => 'Bonus',
             'jam_masuk' => 'Jam masuk',
             'jam_keluar' => 'Jam keluar',
         ];

@@ -36,6 +36,17 @@
                 <div class="input-error" id="error-gaji_pokok"></div>
             </div>
 
+            <div class="form-group">
+                <label>Bonus (Opsional)</label>
+                <input type="number" id="bonus" class="form-control" placeholder="Kosongkan untuk kalkulasi otomatis">
+                <div class="input-error" id="error-bonus"></div>
+                <div style="margin-top:6px;">
+                    <label style="font-weight:normal; font-size:12px; cursor:pointer; color:#4a5568;">
+                        <input type="checkbox" id="hitung_otomatis_bonus" value="1" checked> Hitung otomatis dari rekap presensi selesai (Rp 50.000 / kehadiran)
+                    </label>
+                </div>
+            </div>
+
             <div class="button-group">
                 <button type="submit" class="btn-jobdesk">Simpan</button>
                 <button type="button" class="btn-danger" data-close>Batal</button>

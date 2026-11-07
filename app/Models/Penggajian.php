@@ -14,6 +14,8 @@ class Penggajian extends Model
         'karyawan_id',
         'tanggal',
         'gaji_pokok',
+        'bonus',
+        'total_gaji',
     ];
 
     public function karyawan()
