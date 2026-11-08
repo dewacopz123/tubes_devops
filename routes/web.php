@@ -17,6 +17,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/register', [LoginController::class, 'register'])->name('register.process');
 
 Route::middleware('auth')->group(function () {
+    $jobdeskIdUri = '/jobdesk/{id}';
+    $penggajianIdUri = '/penggajian/{id}';
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -28,20 +31,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobdesk/form', [JobdeskController::class, 'form']);
     Route::get('/jobdesk/assign/form', [JobdeskController::class, 'assignForm']);
     Route::post('/jobdesk/assign', [JobdeskController::class, 'assign']);
-    Route::get('/jobdesk/{id}', [JobdeskController::class, 'show'])->whereNumber('id');
-    Route::put('/jobdesk/{id}', [JobdeskController::class, 'update'])->whereNumber('id');
-    Route::delete('/jobdesk/{id}', [JobdeskController::class, 'destroy'])->whereNumber('id');
+    Route::get($jobdeskIdUri, [JobdeskController::class, 'show'])->whereNumber('id');
+    Route::put($jobdeskIdUri, [JobdeskController::class, 'update'])->whereNumber('id');
+    Route::delete($jobdeskIdUri, [JobdeskController::class, 'destroy'])->whereNumber('id');
     Route::delete('/jobdesk/{jobdesk}/karyawan/{karyawan}', [JobdeskController::class, 'removeKaryawan']);
 
     Route::get('/penggajian', [PenggajianController::class, 'index']);
     Route::get('/penggajian/summary', [PenggajianController::class, 'summary']);
     Route::get('/penggajian/create', [PenggajianController::class, 'create']);
     Route::post('/penggajian', [PenggajianController::class, 'store']);
-    Route::get('/penggajian/{id}', [PenggajianController::class, 'show'])->whereNumber('id');
+    Route::get($penggajianIdUri, [PenggajianController::class, 'show'])->whereNumber('id');
     Route::get('/penggajian/{id}/pdf', [PenggajianController::class, 'downloadPdf'])->whereNumber('id');
     Route::get('/penggajian/{id}/download-pdf', [PenggajianController::class, 'downloadPdf'])->whereNumber('id');
-    Route::put('/penggajian/{id}', [PenggajianController::class, 'update'])->whereNumber('id');
-    Route::delete('/penggajian/{id}', [PenggajianController::class, 'destroy'])->whereNumber('id');
+    Route::put($penggajianIdUri, [PenggajianController::class, 'update'])->whereNumber('id');
+    Route::delete($penggajianIdUri, [PenggajianController::class, 'destroy'])->whereNumber('id');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::match(['post', 'put'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -52,16 +55,18 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    $karyawanIdUri = '/karyawan/{id}';
+
     Route::get('/admin/dashboard', function () {
         return redirect()->route('dashboard');
     });
 
     Route::get('/karyawan', [KaryawanController::class, 'index']);
     Route::get('/karyawan/form', [KaryawanController::class, 'form']);
-    Route::get('/karyawan/{id}', [KaryawanController::class, 'show'])->whereNumber('id');
+    Route::get($karyawanIdUri, [KaryawanController::class, 'show'])->whereNumber('id');
     Route::post('/karyawan', [KaryawanController::class, 'store']);
-    Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->whereNumber('id');
-    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->whereNumber('id');
+    Route::put($karyawanIdUri, [KaryawanController::class, 'update'])->whereNumber('id');
+    Route::delete($karyawanIdUri, [KaryawanController::class, 'destroy'])->whereNumber('id');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {

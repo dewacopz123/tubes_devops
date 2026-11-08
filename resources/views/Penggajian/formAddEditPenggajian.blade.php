@@ -10,7 +10,7 @@
             <input type="hidden" id="penggajian_id">
 
             <div class="form-group">
-                <label>Nama Karyawan</label>
+                <label for="karyawan_id">Nama Karyawan</label>
                 <select id="karyawan_id" class="form-control">
                     <option value="">Pilih Karyawan</option>
                     @foreach($karyawans as $k)
@@ -21,7 +21,7 @@
             </div>
 
             <div class="form-group">
-                <label>Tanggal</label>
+                <label for="tanggal">Tanggal</label>
                 <input
         type="date"
         id="tanggal"
@@ -31,17 +31,17 @@
             </div>
 
             <div class="form-group">
-                <label>Gaji Pokok</label>
+                <label for="gaji_pokok">Gaji Pokok</label>
                 <input type="number" id="gaji_pokok" class="form-control">
                 <div class="input-error" id="error-gaji_pokok"></div>
             </div>
 
             <div class="form-group">
-                <label>Bonus (Opsional)</label>
+                <label for="bonus">Bonus (Opsional)</label>
                 <input type="number" id="bonus" class="form-control" placeholder="Kosongkan untuk kalkulasi otomatis">
                 <div class="input-error" id="error-bonus"></div>
                 <div style="margin-top:6px;">
-                    <label style="font-weight:normal; font-size:12px; cursor:pointer; color:#4a5568;">
+                    <label for="hitung_otomatis_bonus" style="font-weight:normal; font-size:12px; cursor:pointer; color:#4a5568;">
                         <input type="checkbox" id="hitung_otomatis_bonus" value="1" checked> Hitung otomatis dari rekap presensi selesai (Rp 50.000 / kehadiran)
                     </label>
                 </div>

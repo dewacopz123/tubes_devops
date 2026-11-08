@@ -14,7 +14,7 @@ return new class extends Migration
             $table->date('tanggal');
             $table->time('jam_masuk')->nullable();
             $table->time('jam_keluar')->nullable();
-            $table->enum('status', ['Masuk', 'Selesai'])->default('Masuk');
+            $table->enum('status', ['Masuk', 'Selesai', 'Izin', 'Sakit', 'Alpha'])->default('Masuk');
             $table->timestamps();
         });
     }

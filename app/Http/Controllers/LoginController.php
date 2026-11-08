@@ -25,21 +25,21 @@ class LoginController extends Controller
 
         $user = Karyawan::where('email', $request->email)->first();
 
+        $errorMessage = null;
+        $errorField = 'email';
+
         if (! $user) {
-            return back()->withErrors([
-                'email' => 'Email incorrect',
-            ])->withInput()->with('active', 'login');
+            $errorMessage = 'Email incorrect';
+        } elseif ($user->status !== 'Aktif') {
+            $errorMessage = 'Your account is not active';
+        } elseif (! Hash::check($request->password, $user->password)) {
+            $errorMessage = 'Password incorrect';
+            $errorField = 'password';
         }
 
-        if ($user->status !== 'Aktif') {
+        if ($errorMessage !== null) {
             return back()->withErrors([
-                'email' => 'Your account is not active',
-            ])->withInput()->with('active', 'login');
-        }
-
-        if (! Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
-                'password' => 'Password incorrect',
+                $errorField => $errorMessage,
             ])->withInput()->with('active', 'login');
         }
 

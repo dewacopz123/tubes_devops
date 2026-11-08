@@ -14,7 +14,6 @@ class AuthController extends Controller
     /**
      * Otentikasi akun karyawan dan generate Bearer token unik 80 karakter untuk integrasi REST API.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function login(Request $request)
@@ -54,10 +53,9 @@ class AuthController extends Controller
     /**
      * Logout akun dari sesi REST API dan revoke token dari database.
      *
-     * @param Request $request
      * @return JsonResponse
      */
-    public function logout(Request $request)
+    public function logout()
     {
         if ($user = Auth::user()) {
             $user->revokeToken();

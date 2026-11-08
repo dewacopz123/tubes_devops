@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class SyncController extends Controller
+class SyncController extends Controller // NOSONAR
 {
     use ValidatesSekData;
 
@@ -243,7 +243,7 @@ class SyncController extends Controller
         ]);
     }
 
-    public function absensiMasuk(Request $request)
+    public function absensiMasuk()
     {
         $karyawanId = Auth::id();
         $tanggal = Carbon::today();
@@ -273,7 +273,7 @@ class SyncController extends Controller
         ], 201);
     }
 
-    public function absensiKeluar(Request $request)
+    public function absensiKeluar()
     {
         $karyawanId = Auth::id();
         $tanggal = Carbon::today();

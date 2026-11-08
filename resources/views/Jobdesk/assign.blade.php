@@ -25,12 +25,12 @@
             </div>
 
             <div class="group">
-                <label>Karyawan yang Sudah Ditugaskan</label>
+                <span class="form-section-title" style="display:block; font-weight:600; margin-bottom:6px; color:#2d3748;">Karyawan yang Sudah Ditugaskan</span>
                 <div id="existingAssignedKaryawans" class="assigned-list"></div>
             </div>
 
             <div class="group">
-                <label>Karyawan Baru untuk Ditambahkan</label>
+                <span class="form-section-title" style="display:block; font-weight:600; margin-bottom:6px; color:#2d3748;">Karyawan Baru untuk Ditambahkan</span>
                 <div id="assignedKaryawans" class="assigned-list"></div>
                 <div id="assignedKaryawanInputs"></div>
             </div>
