@@ -6,9 +6,19 @@ use App\Models\Absensi;
 use App\Models\Karyawan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    /**
+     * Menampilkan dashboard utama dengan ringkasan agregasi metrik statistik real-time:
+     * - total seluruh karyawan
+     * - total karyawan aktif dan nonaktif
+     * - jumlah karyawan hadir hari ini (status Masuk / Selesai)
+     * - daftar karyawan beserta status jobdesk
+     *
+     * @return View
+     */
     public function index()
     {
         $today = Carbon::today();

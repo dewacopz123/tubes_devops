@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Karyawan;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * Otentikasi akun karyawan dan generate Bearer token unik 80 karakter untuk integrasi REST API.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function login(Request $request)
     {
         $request->validate([
@@ -44,12 +51,20 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Logout akun dari sesi REST API dan revoke token dari database.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function logout(Request $request)
     {
         if ($user = Auth::user()) {
             $user->revokeToken();
         }
 
-        return response()->json(['message' => 'Berhasil logout']);
+        return response()->json([
+            'message' => 'Berhasil logout',
+        ]);
     }
 }

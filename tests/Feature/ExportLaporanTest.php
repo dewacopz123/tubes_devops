@@ -12,7 +12,7 @@ class ExportLaporanTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function login(): void
+    private function login(): Karyawan
     {
         $karyawan = Karyawan::create([
             'kode_karyawan' => 'KRY-001',
@@ -23,13 +23,15 @@ class ExportLaporanTest extends TestCase
             'status' => 'Aktif',
         ]);
         $this->actingAs($karyawan);
+
+        return $karyawan;
     }
 
     /**
-     * EXP-001
-     * Menguji export laporan perusahaan dapat diunduh.
+     * TEST CASE 1 (POSITIF):
+     * Mengakses URL /export/laporan berhasil mengunduh file laporan-perusahaan.xlsx (status 200).
      */
-    public function test_export_laporan_can_be_downloaded()
+    public function test_export_laporan_can_be_downloaded_by_authenticated_user(): void
     {
         Excel::fake();
         $this->login();
@@ -41,40 +43,23 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-     * EXP-002
-     * Menguji export laporan perusahaan saat data kosong tetap dapat diunduh.
+     * TEST CASE 2 (NEGATIF):
+     * Akses ekspor oleh pengguna yang belum login diblokir dan diarahkan ke login.
      */
-    public function test_export_laporan_kosong_can_be_downloaded()
+    public function test_export_laporan_unauthenticated_user_redirected_to_login(): void
     {
-        Excel::fake();
-        $this->login();
-
         $response = $this->get('/export/laporan');
 
-        $response->assertStatus(200);
-        Excel::assertDownloaded('laporan-perusahaan.xlsx');
+        $response->assertStatus(302);
+        $response->assertRedirect('/login');
     }
 
     /**
-     * EXP-003
-     * Menguji export relasi data null pada karyawan.
+     * TEST CASE 3 (EDGE CASE):
+     * Melakukan ekspor ketika database masih kosong tidak memicu error server 500,
+     * melainkan tetap menghasilkan file template kosong yang valid.
      */
-    public function test_export_laporan_relasi_null_can_be_downloaded()
-    {
-        Excel::fake();
-        $this->login();
-
-        $response = $this->get('/export/laporan');
-
-        $response->assertStatus(200);
-        Excel::assertDownloaded('laporan-perusahaan.xlsx');
-    }
-
-    /**
-     * EXP-004
-     * Menguji relasi kosong pada sheet jobdesk.
-     */
-    public function test_export_laporan_relasi_kosong_can_be_downloaded()
+    public function test_export_laporan_empty_database_returns_valid_spreadsheet_without_server_error(): void
     {
         Excel::fake();
         $this->login();
@@ -86,10 +71,23 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-     * WBT-01-FR10
+     * Menguji export laporan relasi data null pada karyawan.
+     */
+    public function test_export_laporan_relasi_null_can_be_downloaded(): void
+    {
+        Excel::fake();
+        $this->login();
+
+        $response = $this->get('/export/laporan');
+
+        $response->assertStatus(200);
+        Excel::assertDownloaded('laporan-perusahaan.xlsx');
+    }
+
+    /**
      * Menguji export penggajian saat data tersedia.
      */
-    public function test_export_penggajian_can_be_downloaded()
+    public function test_export_penggajian_can_be_downloaded(): void
     {
         Excel::fake();
         $this->login();
@@ -101,10 +99,9 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-     * WBT-01-FR10
      * Menguji export penggajian saat data kosong tetap dapat diunduh.
      */
-    public function test_export_penggajian_kosong_can_be_downloaded()
+    public function test_export_penggajian_kosong_can_be_downloaded(): void
     {
         Excel::fake();
         $this->login();
@@ -116,10 +113,9 @@ class ExportLaporanTest extends TestCase
     }
 
     /**
-     * WBT-01-FR10
      * Menguji relasi karyawan null pada export penggajian tetap dapat diunduh.
      */
-    public function test_export_penggajian_relasi_null_can_be_downloaded()
+    public function test_export_penggajian_relasi_null_can_be_downloaded(): void
     {
         Excel::fake();
         $this->login();

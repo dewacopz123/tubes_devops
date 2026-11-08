@@ -24,7 +24,11 @@ class ApiAuthTest extends TestCase
         ], $attributes));
     }
 
-    public function test_api_login_success()
+    /**
+     * TEST CASE 1 (POSITIF):
+     * Endpoint POST /api/login mengembalikan access_token valid (80 karakter) dan payload data user.
+     */
+    public function test_api_login_returns_valid_bearer_token_and_user_payload(): void
     {
         $karyawan = $this->createKaryawan();
 
@@ -37,11 +41,66 @@ class ApiAuthTest extends TestCase
         $response->assertJsonStructure([
             'access_token',
             'token_type',
-            'user' => ['id', 'nama', 'email'],
+            'user' => ['id', 'kode_karyawan', 'nama', 'email', 'telepon', 'role', 'status'],
+        ]);
+
+        $data = $response->json();
+        $this->assertEquals('Bearer', $data['token_type']);
+        $this->assertEquals(80, strlen($data['access_token']));
+        $this->assertEquals($karyawan->email, $data['user']['email']);
+    }
+
+    /**
+     * TEST CASE 2 (NEGATIF):
+     * Mengakses endpoint API privat tanpa header Authorization: Bearer <token>
+     * ditolak dengan status 401 Unauthenticated.
+     */
+    public function test_accessing_private_api_endpoint_without_bearer_token_returns_unauthenticated(): void
+    {
+        $response = $this->postJson('/api/logout');
+
+        $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthenticated',
         ]);
     }
 
-    public function test_api_login_fails_with_invalid_credentials()
+    /**
+     * TEST CASE 3 (EDGE CASE):
+     * Endpoint POST /api/logout berhasil menghapus (revoke) token dari database
+     * sehingga token lama tidak bisa digunakan kembali untuk request berikutnya.
+     */
+    public function test_api_logout_revokes_token_and_prevents_subsequent_access(): void
+    {
+        $karyawan = $this->createKaryawan();
+        $token = $karyawan->createToken();
+
+        // 1. Panggil logout dengan token valid
+        $response = $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/logout');
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Berhasil logout',
+        ]);
+
+        // 2. Verifikasi token di database telah dicabut (null)
+        $this->assertNull($karyawan->fresh()->api_token);
+
+        // 3. Mengakses kembali endpoint yang sama dengan token lama harus ditolak (401)
+        $subsequentResponse = $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/logout');
+
+        $subsequentResponse->assertStatus(401);
+        $subsequentResponse->assertJson([
+            'message' => 'Unauthorized',
+        ]);
+    }
+
+    /**
+     * Menguji penolakan login jika password salah.
+     */
+    public function test_api_login_fails_with_invalid_credentials(): void
     {
         $karyawan = $this->createKaryawan();
 
@@ -51,10 +110,15 @@ class ApiAuthTest extends TestCase
         ]);
 
         $response->assertStatus(401);
-        $response->assertJson(['message' => 'Email atau password salah']);
+        $response->assertJson([
+            'message' => 'Email atau password salah',
+        ]);
     }
 
-    public function test_api_login_fails_when_account_inactive()
+    /**
+     * Menguji penolakan login saat akun karyawan berstatus nonaktif.
+     */
+    public function test_api_login_fails_when_account_inactive(): void
     {
         $karyawan = $this->createKaryawan(['status' => 'Nonaktif']);
 
@@ -66,30 +130,17 @@ class ApiAuthTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_api_logout_success()
+    /**
+     * Menguji request dengan bearer token acak yang tidak terdaftar di database.
+     */
+    public function test_api_unauthorized_with_fake_token(): void
     {
-        $karyawan = $this->createKaryawan();
-        $token = $karyawan->createToken();
-
-        $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->postJson('/api/logout');
-
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Berhasil logout']);
-        $this->assertNull($karyawan->fresh()->api_token);
-    }
-
-    public function test_api_unauthenticated_without_token()
-    {
-        $response = $this->postJson('/api/logout');
-        $response->assertStatus(401);
-    }
-
-    public function test_api_unauthorized_with_fake_token()
-    {
-        $response = $this->withHeader('Authorization', 'Bearer invalid-token-123')
+        $response = $this->withHeader('Authorization', 'Bearer invalid-token-12345')
             ->postJson('/api/logout');
 
         $response->assertStatus(401);
+        $response->assertJson([
+            'message' => 'Unauthorized',
+        ]);
     }
 }
