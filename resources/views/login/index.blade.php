@@ -32,9 +32,9 @@
         <p class="form-subtitle">Create your account to start using website SEKP</p>
 
         <div class="input-group-label">
-          <label>Name</label>
+          <label for="register_nama">Name</label>
           <div class="input-field-wrapper">
-            <input type="text" name="nama" value="{{ old('nama') }}" required>
+            <input id="register_nama" type="text" name="nama" value="{{ old('nama') }}" required>
             @error('nama')
               <div class="form-error">{{ $message }}</div>
             @enderror
@@ -42,9 +42,9 @@
         </div>
 
         <div class="input-group-label">
-          <label>Email</label>
+          <label for="register_email">Email</label>
           <div class="input-field-wrapper">
-            <input type="email" name="email" value="{{ old('email') }}" required>
+            <input id="register_email" type="email" name="email" value="{{ old('email') }}" required>
             @error('email')
               <div class="form-error">{{ $message }}</div>
             @enderror
@@ -52,9 +52,9 @@
         </div>
 
         <div class="input-group-label">
-          <label>Password</label>
+          <label for="register_password">Password</label>
           <div class="input-field-wrapper">
-            <input type="password" name="password" required>
+            <input id="register_password" type="password" name="password" required>
             <i class="fa-solid fa-eye-slash password-icon" aria-hidden="true"></i>
             @error('password')
               <div class="form-error">{{ $message }}</div>
@@ -74,9 +74,9 @@
         <p class="form-subtitle">Sign In untuk masuk ke website SEKP</p>
 
         <div class="input-group-label">
-          <label>Email</label>
+          <label for="login_email">Email</label>
           <div class="input-field-wrapper">
-            <input type="email" name="email" value="{{ old('email') }}" required>
+            <input id="login_email" type="email" name="email" value="{{ old('email') }}" required>
             @error('email')
               <div class="form-error">{{ $message }}</div>
             @enderror
@@ -84,9 +84,9 @@
         </div>
 
         <div class="input-group-label">
-          <label>Password</label>
+          <label for="login_password">Password</label>
           <div class="input-field-wrapper">
-            <input type="password" name="password" required>
+            <input id="login_password" type="password" name="password" required>
             <i class="fa-solid fa-eye-slash password-icon" aria-hidden="true"></i>
             @error('password')
               <div class="form-error">{{ $message }}</div>
@@ -95,8 +95,8 @@
         </div>
 
         <div class="remember-me">
-          <label class="remember-check">
-            <input type="checkbox" name="remember">
+          <label for="remember_me" class="remember-check">
+            <input id="remember_me" type="checkbox" name="remember">
             <span>Remember me</span>
           </label>
           <a href="#" class="forgot-link">Forgot Password</a>

@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['api.token'])->group(function () {
+    $karyawansIdUri = '/karyawans/{id}';
+    $jobdesksIdUri = '/jobdesks/{id}';
+    $absensisIdUri = '/absensis/{id}';
+    $penggajiansIdUri = '/penggajians/{id}';
 
     Route::post(
         '/profile/upload-photo',
@@ -22,10 +26,10 @@ Route::middleware(['api.token'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/karyawans', [SyncController::class, 'karyawans']);
-    Route::get('/karyawans/{id}', [SyncController::class, 'showKaryawan']);
+    Route::get($karyawansIdUri, [SyncController::class, 'showKaryawan']);
     Route::post('/karyawans', [SyncController::class, 'storeKaryawan']);
-    Route::put('/karyawans/{id}', [SyncController::class, 'updateKaryawan']);
-    Route::delete('/karyawans/{id}', [SyncController::class, 'destroyKaryawan']);
+    Route::put($karyawansIdUri, [SyncController::class, 'updateKaryawan']);
+    Route::delete($karyawansIdUri, [SyncController::class, 'destroyKaryawan']);
 
     /*
     |--------------------------------------------------------------------------
@@ -33,11 +37,11 @@ Route::middleware(['api.token'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/jobdesks', [SyncController::class, 'jobdesks']);
-    Route::get('/jobdesks/{id}', [SyncController::class, 'showJobdesk']);
+    Route::get($jobdesksIdUri, [SyncController::class, 'showJobdesk']);
 
     Route::post('/jobdesks', [SyncController::class, 'storeJobdesk']);
-    Route::put('/jobdesks/{id}', [SyncController::class, 'updateJobdesk']);
-    Route::delete('/jobdesks/{id}', [SyncController::class, 'destroyJobdesk']);
+    Route::put($jobdesksIdUri, [SyncController::class, 'updateJobdesk']);
+    Route::delete($jobdesksIdUri, [SyncController::class, 'destroyJobdesk']);
 
     // Assign jobdesk ke satu atau banyak karyawan
     Route::post('/jobdesks/assign', [SyncController::class, 'assignJobdesk']);
@@ -70,10 +74,10 @@ Route::middleware(['api.token'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/absensis', [SyncController::class, 'absensis']);
-    Route::get('/absensis/{id}', [SyncController::class, 'showAbsensi']);
+    Route::get($absensisIdUri, [SyncController::class, 'showAbsensi']);
     Route::post('/absensis', [SyncController::class, 'storeAbsensi']);
-    Route::put('/absensis/{id}', [SyncController::class, 'updateAbsensi']);
-    Route::delete('/absensis/{id}', [SyncController::class, 'destroyAbsensi']);
+    Route::put($absensisIdUri, [SyncController::class, 'updateAbsensi']);
+    Route::delete($absensisIdUri, [SyncController::class, 'destroyAbsensi']);
 
     Route::post('/absensi/masuk', [SyncController::class, 'absensiMasuk']);
     Route::post('/absensi/keluar', [SyncController::class, 'absensiKeluar']);
@@ -84,11 +88,11 @@ Route::middleware(['api.token'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/penggajians', [SyncController::class, 'penggajians']);
-    Route::get('/penggajians/{id}', [SyncController::class, 'showPenggajian']);
+    Route::get($penggajiansIdUri, [SyncController::class, 'showPenggajian']);
 
     Route::post('/penggajians', [SyncController::class, 'storePenggajian']);
-    Route::put('/penggajians/{id}', [SyncController::class, 'updatePenggajian']);
-    Route::delete('/penggajians/{id}', [SyncController::class, 'destroyPenggajian']);
+    Route::put($penggajiansIdUri, [SyncController::class, 'updatePenggajian']);
+    Route::delete($penggajiansIdUri, [SyncController::class, 'destroyPenggajian']);
 
     /*
     |--------------------------------------------------------------------------

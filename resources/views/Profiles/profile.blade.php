@@ -29,7 +29,8 @@
 
                         <img src="{{ $karyawan->foto ?: asset('asset/Icon/profile.png') }}" alt="Foto Profil" class="photo" id="profilePhoto">
 
-                        <input type="file" id="photoInput" accept=".jpg,.jpeg,.png" hidden>
+                        <label for="photoInput" style="display:none;">Unggah Foto Profil</label>
+                        <input type="file" id="photoInput" accept=".jpg,.jpeg,.png" hidden aria-label="Unggah Foto Profil">
 
                         <button type="button" id="btnUploadPhoto" class="btn-primary btn-upload-photo"
                             style="display:none;">
@@ -45,20 +46,20 @@
                     @csrf
 
                     <div class="group">
-                        <label class="label">ID</label>
-                        <input type="text" value="{{ $karyawan->id }}" disabled>
+                        <label for="inputId" class="label">ID</label>
+                        <input id="inputId" type="text" value="{{ $karyawan->id }}" disabled>
                     </div>
 
                     <div class="row">
                         <div class="group">
-                            <label class="label">Nama</label>
+                            <label for="inputNama" class="label">Nama</label>
                             <input id="inputNama" type="text" name="nama" value="{{ old('nama', $karyawan->nama) }}"
                                 required disabled>
                             <span class="input-error" id="error-nama"></span>
                         </div>
 
                         <div class="group">
-                            <label class="label">Email</label>
+                            <label for="inputEmail" class="label">Email</label>
                             <input id="inputEmail" type="email" name="email"
                                 value="{{ old('email', $karyawan->email) }}" required disabled>
                             <span class="input-error" id="error-email"></span>
@@ -67,22 +68,22 @@
 
                     <div class="row">
                         <div class="group">
-                            <label class="label">Telepon</label>
+                            <label for="inputTelepon" class="label">Telepon</label>
                             <input id="inputTelepon" type="text" name="telepon"
                                 value="{{ old('telepon', $karyawan->telepon) }}" disabled>
                             <span class="input-error" id="error-telepon"></span>
                         </div>
 
                         <div class="group">
-                            <label class="label">Role</label>
-                            <input type="text" value="{{ $karyawan->role }}" disabled>
+                            <label for="inputRole" class="label">Role</label>
+                            <input id="inputRole" type="text" value="{{ $karyawan->role }}" disabled>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="group">
-                            <label class="label">Status</label>
-                            <input type="text" value="{{ $karyawan->status }}" disabled>
+                            <label for="inputStatus" class="label">Status</label>
+                            <input id="inputStatus" type="text" value="{{ $karyawan->status }}" disabled>
                         </div>
                         <div class="group"></div>
                     </div>

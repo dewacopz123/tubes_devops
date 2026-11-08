@@ -17,7 +17,7 @@
             </div>
 
             <div class="group" id="assignedSection" style="display: none;">
-                <label>Daftar Karyawan yang Ditugaskan</label>
+                <span class="form-section-title" style="display:block; font-weight:600; margin-bottom:6px; color:#2d3748;">Daftar Karyawan yang Ditugaskan</span>
                 <div id="assignedKaryawansEdit" class="assigned-list"></div>
                 <div class="input-error" id="error-assigned_karyawans"></div>
             </div>

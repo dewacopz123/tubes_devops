@@ -33,8 +33,7 @@
 
                     <p>
                         <b>Status:</b>
-                        <span class="badge 
-                    {{ auth()->user()->status === 'Aktif' ? 'badge-success' : 'badge-danger' }}">
+                        <span class="badge {{ auth()->user()->status === 'Aktif' ? 'badge-success' : 'badge-danger' }}">
                             {{ auth()->user()->status }}
                         </span>
                     </p>

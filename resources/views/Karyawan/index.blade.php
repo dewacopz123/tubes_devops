@@ -32,7 +32,7 @@
             {{-- FILTER --}}
             <div class="card-content">
                 <div>
-                    <label>Nama</label>
+                    <label for="filterNama">Nama</label>
                     <select id="filterNama" class="searchCategory">
                         <option value="">Semua</option>
                         @foreach($karyawans as $k)
@@ -40,7 +40,7 @@
                         @endforeach
                     </select>
 
-                    <label>Role</label>
+                    <label for="filterRole">Role</label>
                     <select id="filterRole" class="searchCategory">
                         <option value="">Semua</option>
                         <option value="Karyawan">Karyawan</option>

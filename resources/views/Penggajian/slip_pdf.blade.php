@@ -47,7 +47,7 @@
             margin-bottom: 20px;
             border-collapse: collapse;
         }
-        .info-table td {
+        .info-table td, .info-table th {
             padding: 6px 4px;
             vertical-align: top;
         }
@@ -119,24 +119,32 @@
     </div>
 
     <table class="info-table">
-        <tr>
-            <td class="info-label">Kode Slip Gaji</td>
-            <td>: <strong>{{ $penggajian->kode_penggajian }}</strong></td>
-            <td class="info-label">Tanggal Transaksi</td>
-            <td>: {{ \Carbon\Carbon::parse($penggajian->tanggal)->translatedFormat('d F Y') }}</td>
-        </tr>
-        <tr>
-            <td class="info-label">Nama Karyawan</td>
-            <td>: {{ optional($penggajian->karyawan)->nama ?? '-' }}</td>
-            <td class="info-label">Kode Karyawan</td>
-            <td>: {{ optional($penggajian->karyawan)->kode_karyawan ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="info-label">Email</td>
-            <td>: {{ optional($penggajian->karyawan)->email ?? '-' }}</td>
-            <td class="info-label">Role / Status</td>
-            <td>: {{ ucfirst(optional($penggajian->karyawan)->role ?? 'Karyawan') }} / {{ optional($penggajian->karyawan)->status ?? 'Aktif' }}</td>
-        </tr>
+        <thead>
+            <tr>
+                <th colspan="2" style="text-align: left; font-size: 11px; color: #4a5568; border-bottom: 1px solid #cbd5e0;">Informasi Dokumen</th>
+                <th colspan="2" style="text-align: left; font-size: 11px; color: #4a5568; border-bottom: 1px solid #cbd5e0;">Informasi Pegawai</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="info-label">Kode Slip Gaji</td>
+                <td>: <strong>{{ $penggajian->kode_penggajian }}</strong></td>
+                <td class="info-label">Tanggal Transaksi</td>
+                <td>: {{ \Carbon\Carbon::parse($penggajian->tanggal)->translatedFormat('d F Y') }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Nama Karyawan</td>
+                <td>: {{ optional($penggajian->karyawan)->nama ?? '-' }}</td>
+                <td class="info-label">Kode Karyawan</td>
+                <td>: {{ optional($penggajian->karyawan)->kode_karyawan ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Email</td>
+                <td>: {{ optional($penggajian->karyawan)->email ?? '-' }}</td>
+                <td class="info-label">Role / Status</td>
+                <td>: {{ ucfirst(optional($penggajian->karyawan)->role ?? 'Karyawan') }} / {{ optional($penggajian->karyawan)->status ?? 'Aktif' }}</td>
+            </tr>
+        </tbody>
     </table>
 
     <table class="salary-table">

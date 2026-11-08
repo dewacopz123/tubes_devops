@@ -13,8 +13,6 @@ class ApiTokenMiddleware
     /**
      * Memvalidasi keberadaan dan keabsahan Bearer Token pada header Authorization request API.
      *
-     * @param Request $request
-     * @param Closure $next
      * @return JsonResponse|mixed
      */
     public function handle(Request $request, Closure $next)
