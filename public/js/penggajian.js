@@ -60,6 +60,110 @@ document.addEventListener("DOMContentLoaded", () => {
         handleSubmit();
     }
 
+    function formatRupiah(num) {
+        return new Intl.NumberFormat('id-ID').format(Math.round(num || 0));
+    }
+
+    // ================= SUMMARY FINANSIAL MODAL =================
+
+    const btnSummary = document.getElementById("btnSummaryFinansial");
+    if (btnSummary) {
+        btnSummary.onclick = async () => {
+            btnSummary.disabled = true;
+            btnSummary.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+
+            try {
+                const res = await fetch('/penggajian/summary', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    notify?.error("Gagal memuat ringkasan finansial.");
+                    return;
+                }
+
+                const s = data.summary;
+                const isAdmin = data.role === 'admin';
+
+                let contentHtml = '';
+                if (isAdmin) {
+                    contentHtml = `
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin: 16px 0;">
+                            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#166534; text-transform:uppercase;">Total Pengeluaran Kas</div>
+                                <div style="font-size:18px; font-weight:bold; color:#15803d; margin-top:4px;">Rp ${formatRupiah(s.total_pengeluaran_gaji)}</div>
+                                <div style="font-size:10px; color:#65a30d; margin-top:2px;">Akumulasi gaji pokok + bonus</div>
+                            </div>
+                            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#1e40af; text-transform:uppercase;">Total Gaji Pokok</div>
+                                <div style="font-size:18px; font-weight:bold; color:#2563eb; margin-top:4px;">Rp ${formatRupiah(s.total_gaji_pokok)}</div>
+                                <div style="font-size:10px; color:#60a5fa; margin-top:2px;">Beban gaji pokok karyawan</div>
+                            </div>
+                            <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#854d0e; text-transform:uppercase;">Bonus Kehadiran</div>
+                                <div style="font-size:18px; font-weight:bold; color:#ca8a04; margin-top:4px;">Rp ${formatRupiah(s.total_bonus_dibagikan)}</div>
+                                <div style="font-size:10px; color:#a16207; margin-top:2px;">Insentif kehadiran selesai</div>
+                            </div>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#475569; text-transform:uppercase;">Rata-rata Gaji</div>
+                                <div style="font-size:18px; font-weight:bold; color:#334155; margin-top:4px;">Rp ${formatRupiah(s.rata_rata_gaji)}</div>
+                                <div style="font-size:10px; color:#64748b; margin-top:2px;">Berdasarkan ${s.total_slip_diterbitkan} slip gaji</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin: 16px 0;">
+                            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#166534; text-transform:uppercase;">Total Pendapatan Bersih</div>
+                                <div style="font-size:18px; font-weight:bold; color:#15803d; margin-top:4px;">Rp ${formatRupiah(s.total_pendapatan)}</div>
+                                <div style="font-size:10px; color:#65a30d; margin-top:2px;">Total take home pay diterima</div>
+                            </div>
+                            <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#854d0e; text-transform:uppercase;">Bonus Kehadiran Anda</div>
+                                <div style="font-size:18px; font-weight:bold; color:#ca8a04; margin-top:4px;">Rp ${formatRupiah(s.total_bonus_diterima)}</div>
+                                <div style="font-size:10px; color:#a16207; margin-top:2px;">Dari keaktifan presensi selesai</div>
+                            </div>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+                                <div style="font-size:11px; font-weight:bold; color:#475569; text-transform:uppercase;">Rata-rata per Bulan</div>
+                                <div style="font-size:18px; font-weight:bold; color:#334155; margin-top:4px;">Rp ${formatRupiah(s.rata_rata_gaji)}</div>
+                                <div style="font-size:10px; color:#64748b; margin-top:2px;">Dari ${s.total_slip} transaksi slip</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                openDialog(`
+                    <div class="dialog-overlay">
+                        <div class="dialog-box" style="width: min(540px, 95%);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
+                                <h3 style="margin:0; font-size:18px; color:#1e293b; display:flex; align-items:center; gap:8px;">
+                                    <i class="fas fa-chart-pie" style="color:#2563eb;"></i> Ringkasan Finansial Penggajian
+                                </h3>
+                                <span style="font-size:11px; font-weight:bold; padding:4px 8px; border-radius:6px; background:${isAdmin ? '#dbeafe; color:#1e40af;' : '#dcfce7; color:#166534;'}">
+                                    ${isAdmin ? 'Peran: Admin' : 'Peran: Karyawan'}
+                                </span>
+                            </div>
+                            <p style="font-size:12px; color:#64748b; margin:0 0 10px 0;">
+                                ${isAdmin ? 'Rekapitulasi beban biaya penggajian seluruh karyawan perusahaan.' : 'Rekapitulasi akumulasi slip gaji dan insentif kehadiran pribadi Anda.'}
+                            </p>
+                            ${contentHtml}
+                            <div class="dialog-actions" style="margin-top:16px;">
+                                <button type="button" class="btn btn-jobdesk" data-dialog-close>Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            } catch (err) {
+                notify?.error("Terjadi kesalahan saat memuat summary.");
+            } finally {
+                btnSummary.disabled = false;
+                btnSummary.innerHTML = '<i class="fas fa-chart-line"></i> Summary Finansial';
+            }
+        };
+    }
+
     // ================= TAMBAH =================
 
     const btnAdd = document.getElementById("btnAddPenggajian");

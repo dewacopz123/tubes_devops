@@ -56,9 +56,9 @@
                     <button type="button" class="btn btn-export-pill" onclick="window.location.href='/export/penggajian'">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </button>
-                    <a href="/penggajian/summary" class="btn btn-export-pill" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    <button type="button" id="btnSummaryFinansial" class="btn btn-export-pill" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
                         <i class="fas fa-chart-line"></i> Summary Finansial
-                    </a>
+                    </button>
                 </div>
             @endauth
 
